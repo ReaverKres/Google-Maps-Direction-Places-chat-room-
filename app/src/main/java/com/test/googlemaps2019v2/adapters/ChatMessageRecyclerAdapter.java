@@ -1,9 +1,15 @@
 package com.test.googlemaps2019v2.adapters;
 
 import android.content.Context;
+<<<<<<< HEAD
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+=======
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+>>>>>>> Migrate to Android X and AutoCompleteTV
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

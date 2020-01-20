@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.test.googlemaps2019v2"
@@ -9,6 +10,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+=======
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "com.test.googlemaps2019v2"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+>>>>>>> Migrate to Android X and AutoCompleteTV
         multiDexEnabled true
     }
     buildTypes {
@@ -26,6 +37,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+<<<<<<< HEAD
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
@@ -52,6 +64,38 @@ dependencies {
 
     // Google play services for location information
     implementation 'com.google.android.gms:play-services-location:15.+'
+=======
+    //noinspection GradleCompatible
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    //Android Support Design Library
+    implementation 'com.google.android.material:material:1.0.0'
+    //RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    // Support multidex
+    implementation 'androidx.multidex:multidex:2.0.0'
+    // Firebase Core
+    implementation 'com.google.firebase:firebase-core:17.2.2'
+    //Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    // Firestore Firestore
+    implementation 'com.google.firebase:firebase-firestore:21.3.1'
+
+    //Google Play Services for Maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+	
+	// Maps utils (required for custom markers)
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+
+    // Google play services for location information
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    //Google places
+    implementation 'com.google.android.libraries.places:places:2.1.0'
+>>>>>>> Migrate to Android X and AutoCompleteTV
 
     //Google places
     //implementation 'com.google.android.gms:play-services-places:9.8.0'
