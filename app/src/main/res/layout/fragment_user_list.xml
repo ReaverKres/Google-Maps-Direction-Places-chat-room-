@@ -12,21 +12,13 @@
         android:weightSum="100"
         android:background="@color/White">
 
-<<<<<<< HEAD
-        <android.support.v7.widget.RecyclerView
-=======
         <androidx.recyclerview.widget.RecyclerView
->>>>>>> Migrate to Android X and AutoCompleteTV
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="50"
             android:id="@+id/user_list_recycler_view">
 
-<<<<<<< HEAD
-        </android.support.v7.widget.RecyclerView>
-=======
         </androidx.recyclerview.widget.RecyclerView>
->>>>>>> Migrate to Android X and AutoCompleteTV
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -59,6 +51,7 @@
 
                 <AutoCompleteTextView
                     android:id="@+id/input_search"
+                    android:singleLine="true"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"

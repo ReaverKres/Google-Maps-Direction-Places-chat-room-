@@ -1,33 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<android.support.constraint.ConstraintLayout
-=======
 <androidx.constraintlayout.widget.ConstraintLayout
->>>>>>> Migrate to Android X and AutoCompleteTV
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<<<<<<< HEAD
-    <android.support.v7.widget.RecyclerView
-=======
     <androidx.recyclerview.widget.RecyclerView
->>>>>>> Migrate to Android X and AutoCompleteTV
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/chatrooms_recycler_view">
 
-<<<<<<< HEAD
-    </android.support.v7.widget.RecyclerView>
-
-    <android.support.design.widget.FloatingActionButton
-=======
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
->>>>>>> Migrate to Android X and AutoCompleteTV
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -48,8 +34,4 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
 
-<<<<<<< HEAD
-</android.support.constraint.ConstraintLayout>
-=======
 </androidx.constraintlayout.widget.ConstraintLayout>
->>>>>>> Migrate to Android X and AutoCompleteTV

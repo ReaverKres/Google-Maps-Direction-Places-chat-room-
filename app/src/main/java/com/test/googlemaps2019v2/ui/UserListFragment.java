@@ -11,63 +11,31 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-<<<<<<< HEAD
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-=======
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< HEAD
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.GeolocationPermissions;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-=======
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-<<<<<<< HEAD
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-
-import com.test.googlemaps2019v2.R;
-
-=======
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.test.googlemaps2019v2.R;
 
 import com.test.googlemaps2019v2.adapters.PlaceAutoSuggestAdapter;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import com.test.googlemaps2019v2.adapters.UserRecyclerAdapter;
 import com.test.googlemaps2019v2.models.ClusterMarker;
 import com.test.googlemaps2019v2.models.PolylineData;
@@ -99,16 +67,8 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 
-<<<<<<< HEAD
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
-=======
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import java.util.List;
 
 import static com.test.googlemaps2019v2.Constants.DEFAULT_ZOOM;
@@ -143,6 +103,7 @@ public class UserListFragment extends Fragment implements
     private UserLocation mUserPosition;
     private LatLngBounds mMapBoundary;
     private ClusterManager<ClusterMarker> mClusterManager;
+    private ClusterManager<ClusterMarker> myClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private int mMapLayoutState = 0;
@@ -152,12 +113,7 @@ public class UserListFragment extends Fragment implements
     private ArrayList<Marker> mTripMarkers = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Boolean mLocationPermissionsGranted = true;
-  //  private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
-<<<<<<< HEAD
-=======
-    private PlacesClient placesClient;
     private PlaceAutoSuggestAdapter placeAutoSuggestAdapter;
->>>>>>> Migrate to Android X and AutoCompleteTV
 
 
 
@@ -177,10 +133,7 @@ public class UserListFragment extends Fragment implements
                 mUserLocations.addAll(locations);
             }
         }
-<<<<<<< HEAD
-=======
        // initAutoCompleteFragment();
->>>>>>> Migrate to Android X and AutoCompleteTV
     }
 
     @Nullable
@@ -200,10 +153,6 @@ public class UserListFragment extends Fragment implements
 
         setUserPosition();
         init();
-<<<<<<< HEAD
-=======
-        //initAutoCompleteFragment();
->>>>>>> Migrate to Android X and AutoCompleteTV
         return view;
     }
 
@@ -224,6 +173,10 @@ public class UserListFragment extends Fragment implements
 
     private void stopLocationUpdates(){
         mHandler.removeCallbacks(mRunnable);
+    }
+
+    public ArrayList<ClusterMarker> getmClusterMarkers() {
+        return mClusterMarkers;
     }
 
     private void retrieveUserLocations(){
@@ -292,7 +245,41 @@ public class UserListFragment extends Fragment implements
         }
     }
 
-    private void addMapMarkers(){
+    private void setUpClusterManager(GoogleMap googleMap){
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+        //myClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+        if(mClusterManager == null){
+            mClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+            mClusterManager.setRenderer(mClusterManagerRenderer);
+        }
+
+        // 3
+        googleMap.setOnCameraIdleListener(mClusterManager);;
+        //googleMap.setOnMarkerClickListener(mClusterManager);
+       // googleMap.setOnInfoWindowClickListener(mClusterManager);
+        List<ClusterMarker> items = getmClusterMarkers();
+        mClusterManager.addItems(items);
+        addMarkers();// 4
+        mClusterManager.cluster();  // 5
+    }
+
+    private void addMarkers() {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = 51.5145160;
+        double lng = -0.1270060;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            ClusterMarker offsetItem = new ClusterMarker(lat, lng);
+            mClusterManager.addItem(offsetItem);
+        }
+    }
+
+        private void addMapMarkers(){
 
         if(mGoogleMap != null){
 
@@ -307,6 +294,7 @@ public class UserListFragment extends Fragment implements
                         mGoogleMap,
                         mClusterManager
                 );
+                mClusterManagerRenderer.setMinClusterSize(2);
                 mClusterManager.setRenderer(mClusterManagerRenderer);
             }
             mGoogleMap.setOnInfoWindowClickListener(this);
@@ -398,10 +386,7 @@ public class UserListFragment extends Fragment implements
                     .apiKey(getString(R.string.google_maps_api_key))
                     .build();
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> Migrate to Android X and AutoCompleteTV
     }
 
     private void initUserListRecyclerView() {
@@ -410,48 +395,19 @@ public class UserListFragment extends Fragment implements
         mUserListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-<<<<<<< HEAD
-    private void init(){        //edit_text
-        Log.d(TAG, "init: initialization");
-
-=======
-//   private void initAutoCompleteFragment(){
-//       if (!Places.isInitialized()){
-//           Places.initialize(getActivity().getApplicationContext(),getString(R.string.google_maps_api_key));
-//       }
-//
-//       placesClient = Places.createClient(getActivity().getApplicationContext());
-//       final AutocompleteSupportFragment autocompleteSupportFragment =
-//               (AutocompleteSupportFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//
-//        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID,Place.Field.LAT_LNG,Place.Field.NAME));
-//        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(@NonNull Place place) {
-//                final LatLng latLng = place.getLatLng();
-//                Log.d(TAG, "initAutoCompleteFragment: onPlaceSelected: \n" + latLng.latitude + " " + latLng.longitude);
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Status status) {
-//                Log.e(TAG, "initAutoCompleteFragment: onError: \n" + status.getStatus().toString() );
-//            }
-//        });
-//    }
-
     private void init(){        //AutoCompleteTV
         Log.d(TAG, "init: initialization");
 
         mSearchText.setAdapter(new PlaceAutoSuggestAdapter(getContext(),android.R.layout.simple_list_item_1));
 
->>>>>>> Migrate to Android X and AutoCompleteTV
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                        || keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                        || keyEvent.getAction() == KeyEvent.ACTION_UP){
 
                     //execute our method for searching
                     geoLocate();
@@ -503,7 +459,7 @@ public class UserListFragment extends Fragment implements
         }
     }
 
-    private void geoLocate(){
+    private void geoLocate(){   //Поиск локации в TextAutoComplete
         Log.d(TAG, "geoLocate: geoLocating");
 
         String searchString = mSearchText.getText().toString();
@@ -525,6 +481,9 @@ public class UserListFragment extends Fragment implements
         }
     }
 
+
+
+
     private void moveCamera(LatLng latLng, float zoom, String title){
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom),600,null);
@@ -538,9 +497,9 @@ public class UserListFragment extends Fragment implements
        // hideSoftKeyboard();
     }
 
-//    private void hideSoftKeyboard(){
-//       this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-//    }
+    private void hideSoftKeyboard(){
+       this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -589,7 +548,7 @@ public class UserListFragment extends Fragment implements
         mGoogleMap = map;
         addMapMarkers();
         mGoogleMap.setOnPolylineClickListener(this);
-
+        setUpClusterManager(mGoogleMap);
     }
 
     @Override

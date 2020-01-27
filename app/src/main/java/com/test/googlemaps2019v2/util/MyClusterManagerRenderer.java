@@ -2,8 +2,11 @@ package com.test.googlemaps2019v2.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 import com.test.googlemaps2019v2.R;
@@ -24,8 +27,11 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
 
     private final IconGenerator iconGenerator;
     private final ImageView imageView;
-    private final int markerWidth;
-    private final int markerHeight;
+    private static final int MARKER_DIMENSION = 100;
+    //private final int markerWidth;
+    //private final int markerHeight;
+    private final View clusterItemView;
+    private LayoutInflater layoutInflater;
 
     public MyClusterManagerRenderer(Context context, GoogleMap googleMap,
                                     ClusterManager<ClusterMarker> clusterManager) {
@@ -35,12 +41,14 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
         // initialize cluster item icon generator
         iconGenerator = new IconGenerator(context.getApplicationContext());
         imageView = new ImageView(context.getApplicationContext());
-        markerWidth = (int) context.getResources().getDimension(R.dimen.custom_marker_image);
-        markerHeight = (int) context.getResources().getDimension(R.dimen.custom_marker_image);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(markerWidth, markerHeight));
+//        markerWidth = (int) context.getResources().getDimension(R.dimen.custom_marker_image);
+//        markerHeight = (int) context.getResources().getDimension(R.dimen.custom_marker_image);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_DIMENSION, MARKER_DIMENSION));
         int padding = (int) context.getResources().getDimension(R.dimen.custom_marker_padding);
         imageView.setPadding(padding, padding, padding, padding);
         iconGenerator.setContentView(imageView);
+        layoutInflater = LayoutInflater.from(context);
+        clusterItemView = layoutInflater.inflate(R.layout.single_cluster_marker_view, null);
 
     }
 
@@ -57,11 +65,25 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.getTitle());
     }
 
+//    @Override
+//    protected void onBeforeClusterRendered(Cluster<ClusterMarker> cluster, MarkerOptions markerOptions) {
+//        TextView singleClusterMarkerSizeTextView = clusterItemView.findViewById(R.id.singleClusterMarkerSizeTextView);
+//        singleClusterMarkerSizeTextView.setText(String.valueOf(cluster.getSize()));
+//        Bitmap icon = iconGenerator.makeIcon();
+//        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+//    }
 
     @Override
-    protected boolean shouldRenderAsCluster(Cluster cluster) {
-        return false;
+    public void setMinClusterSize(int minClusterSize) {
+        super.setMinClusterSize(minClusterSize);
     }
+
+
+
+    //    @Override
+//    protected boolean shouldRenderAsCluster(Cluster cluster) {
+//        return true;
+//    }
 
     /**
      * Update the GPS coordinate of a ClusterItem

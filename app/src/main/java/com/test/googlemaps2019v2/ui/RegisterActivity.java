@@ -2,17 +2,10 @@ package com.test.googlemaps2019v2.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-=======
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -51,10 +44,10 @@ public class RegisterActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mEmail = (EditText) findViewById(R.id.input_email);
-        mPassword = (EditText) findViewById(R.id.input_password);
-        mConfirmPassword = (EditText) findViewById(R.id.input_confirm_password);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mEmail =  findViewById(R.id.input_email);
+        mPassword =  findViewById(R.id.input_password);
+        mConfirmPassword = findViewById(R.id.input_confirm_password);
+        mProgressBar =  findViewById(R.id.progressBar);
 
         findViewById(R.id.btn_register).setOnClickListener(this);
 

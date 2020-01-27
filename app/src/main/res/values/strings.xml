@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">GoogleMaps2019v2</string>
-
+    <!-- Используется напрямую в models.PlaceApi  -->
     <string name="google_maps_api_key">AIzaSyB49OpBXRL_2k8ZyYlSKNev8knFjDf5jpk</string>
 
-<<<<<<< HEAD
-=======
-    <!-- Используется напрямую в models.PlaceApi  -->
-    <string name="google_maps_server_api_key">AIzaSyCenwt4FSJvfnVG70j99utn5ZRWscCBHyY</string>
 
->>>>>>> Migrate to Android X and AutoCompleteTV
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

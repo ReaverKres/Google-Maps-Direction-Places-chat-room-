@@ -1,11 +1,7 @@
 package com.test.googlemaps2019v2.ui;
 
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.support.v7.app.AppCompatActivity;
-=======
 import androidx.appcompat.app.AppCompatActivity;
->>>>>>> Migrate to Android X and AutoCompleteTV
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
