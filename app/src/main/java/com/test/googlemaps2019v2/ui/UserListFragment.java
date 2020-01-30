@@ -33,11 +33,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.test.googlemaps2019v2.R;
 
+import com.test.googlemaps2019v2.adapters.CustomInfoWindowAdapter;
 import com.test.googlemaps2019v2.adapters.PlaceAutoSuggestAdapter;
 import com.test.googlemaps2019v2.adapters.UserRecyclerAdapter;
-import com.test.googlemaps2019v2.models.ClusterMarker;
+import com.test.googlemaps2019v2.models.EventClusterMarker;
+import com.test.googlemaps2019v2.models.PlaceInfo;
+import com.test.googlemaps2019v2.models.UserClusterMarker;
 import com.test.googlemaps2019v2.models.PolylineData;
 import com.test.googlemaps2019v2.models.User;
 import com.test.googlemaps2019v2.models.UserLocation;
@@ -71,9 +75,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.test.googlemaps2019v2.Constants.DEFAULT_ZOOM;
 import static com.test.googlemaps2019v2.Constants.MAPVIEW_BUNDLE_KEY;
 
+//@SuppressWarnings("ALL")
 public class UserListFragment extends Fragment implements
         OnMapReadyCallback,
         View.OnClickListener,
@@ -98,19 +104,22 @@ public class UserListFragment extends Fragment implements
     //vars
     private ArrayList<User> mUserList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
+    private ArrayList<EventClusterMarker> mEventClusterMarkers= new ArrayList<>();
+    private ArrayList<UserClusterMarker> mUserClusterMarkers = new ArrayList<>();
+    private ArrayList<Marker> mTripMarkers = new ArrayList<>();
+    private ArrayList<PolylineData> mPolyLinesData = new ArrayList<>();
     private UserRecyclerAdapter mUserRecyclerAdapter;
     private GoogleMap mGoogleMap;
     private UserLocation mUserPosition;
     private LatLngBounds mMapBoundary;
-    private ClusterManager<ClusterMarker> mClusterManager;
-    private ClusterManager<ClusterMarker> myClusterManager;
+    private ClusterManager<UserClusterMarker> mClusterManager;
+    private ClusterManager<EventClusterMarker> EventClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
-    private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private int mMapLayoutState = 0;
     private GeoApiContext mGeoApiContext;
-    private ArrayList<PolylineData> mPolyLinesData = new ArrayList<>();
     private Marker mSelectedMarker = null;
-    private ArrayList<Marker> mTripMarkers = new ArrayList<>();
+    private PlaceInfo mPlace;
+
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Boolean mLocationPermissionsGranted = true;
     private PlaceAutoSuggestAdapter placeAutoSuggestAdapter;
@@ -175,19 +184,23 @@ public class UserListFragment extends Fragment implements
         mHandler.removeCallbacks(mRunnable);
     }
 
-    public ArrayList<ClusterMarker> getmClusterMarkers() {
-        return mClusterMarkers;
+    public ArrayList<UserClusterMarker> getmUserClusterMarkers() {
+        return mUserClusterMarkers;
+    }
+
+    public ArrayList<UserLocation> getmUserLocations() {
+        return mUserLocations;
     }
 
     private void retrieveUserLocations(){
         Log.d(TAG, "retrieveUserLocations: retrieving location of all users in the chatroom.");
 
         try{
-            for(final ClusterMarker clusterMarker: mClusterMarkers){
+            for(final UserClusterMarker userClusterMarker : mUserClusterMarkers){
 
                 DocumentReference userLocationRef = FirebaseFirestore.getInstance()
                         .collection(getString(R.string.collection_user_locations))
-                        .document(clusterMarker.getUser().getUser_id());
+                        .document(userClusterMarker.getUser().getUser_id());
 
                 userLocationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -197,17 +210,17 @@ public class UserListFragment extends Fragment implements
                             final UserLocation updatedUserLocation = task.getResult().toObject(UserLocation.class);
 
                             // update the location
-                            for (int i = 0; i < mClusterMarkers.size(); i++) {
+                            for (int i = 0; i < mUserClusterMarkers.size(); i++) {
                                 try {
-                                    if (mClusterMarkers.get(i).getUser().getUser_id().equals(updatedUserLocation.getUser().getUser_id())) {
+                                    if (mUserClusterMarkers.get(i).getUser().getUser_id().equals(updatedUserLocation.getUser().getUser_id())) {
 
                                         LatLng updatedLatLng = new LatLng(
                                                 updatedUserLocation.getGeo_point().getLatitude(),
                                                 updatedUserLocation.getGeo_point().getLongitude()
                                         );
 
-                                        mClusterMarkers.get(i).setPosition(updatedLatLng);
-                                        mClusterManagerRenderer.setUpdateMarker(mClusterMarkers.get(i));
+                                        mUserClusterMarkers.get(i).setPosition(updatedLatLng);
+                                        mClusterManagerRenderer.setUpdateMarker(mUserClusterMarkers.get(i));
                                     }
 
 
@@ -233,9 +246,9 @@ public class UserListFragment extends Fragment implements
                 mClusterManager.clearItems();
             }
 
-            if (mClusterMarkers.size() > 0) {
-                mClusterMarkers.clear();
-                mClusterMarkers = new ArrayList<>();
+            if (mUserClusterMarkers.size() > 0) {
+                mUserClusterMarkers.clear();
+                mUserClusterMarkers = new ArrayList<>();
             }
 
             if(mPolyLinesData.size() > 0){
@@ -246,38 +259,69 @@ public class UserListFragment extends Fragment implements
     }
 
     private void setUpClusterManager(GoogleMap googleMap){
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
-        //myClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
         if(mClusterManager == null){
-            mClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+            mClusterManager = new ClusterManager<UserClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
             mClusterManager.setRenderer(mClusterManagerRenderer);
         }
-
         // 3
-        googleMap.setOnCameraIdleListener(mClusterManager);;
-        //googleMap.setOnMarkerClickListener(mClusterManager);
-       // googleMap.setOnInfoWindowClickListener(mClusterManager);
-        List<ClusterMarker> items = getmClusterMarkers();
-        mClusterManager.addItems(items);
-        addMarkers();// 4
+        googleMap.setOnCameraIdleListener(mClusterManager);
+        List<UserClusterMarker> items = getmUserClusterMarkers();
+        mClusterManager.addItems(items);//4
         mClusterManager.cluster();  // 5
+        addMapMarkersWithTouch();
     }
 
-    private void addMarkers() {
+        private void addMapMarkersWithTouch(){
 
-        // Set some lat/lng coordinates to start with.
-        double lat = 51.5145160;
-        double lng = -0.1270060;
+//            if(EventClusterManager == null){
+//                EventClusterManager = new ClusterManager<EventClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+//            }
 
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            ClusterMarker offsetItem = new ClusterMarker(lat, lng);
-            mClusterManager.addItem(offsetItem);
+            //googleMap.setOnCameraIdleListener(EventClusterManager);
+           // googleMap.setOnMarkerClickListener(EventClusterManager);
+
+           mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+               @Override
+               public void onMapLongClick(LatLng latLng) {
+//                   mEventClusterMarkers.add(new EventClusterMarker(latLng));
+//                   EventClusterManager.addItems(mEventClusterMarkers);
+//                   EventClusterManager.cluster();
+
+
+                   Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
+                   List<Address> list = new ArrayList<>();
+                   try{
+                       list = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
+                   }catch (IOException e){
+                       Log.e(TAG, "geoLocateMarker: IOException err: " + e.getMessage() );
+                   }
+                   if (list.size()>0){
+                       Address address = list.get(0);
+                       Log.i(TAG, "geoLocateMarker: found a location: " + address.getAddressLine(0));
+                       Toast.makeText(getActivity(),address.getAddressLine(0),Toast.LENGTH_LONG).show();
+                   }
+                   for(UserLocation userLocation: mUserLocations) {
+                       String title = " ";
+                       if(userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())){
+                           title = "Event by " + userLocation.getUser().getUsername();
+                       }
+                       else{
+                           title = "Event by Anonymous";
+                       }
+
+                       MarkerOptions options = new MarkerOptions()
+                               .position(latLng)
+                               .title(title)
+                               .snippet(list.get(0).getAddressLine(0));
+                       Marker marker = mGoogleMap.addMarker(options);
+                       mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity()));
+                       marker.showInfoWindow();
+                   }
+               }
+           });
+
+
         }
-    }
 
         private void addMapMarkers(){
 
@@ -286,7 +330,7 @@ public class UserListFragment extends Fragment implements
             resetMap();
 
             if(mClusterManager == null){
-                mClusterManager = new ClusterManager<ClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+                mClusterManager = new ClusterManager<UserClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
             }
             if(mClusterManagerRenderer == null){
                 mClusterManagerRenderer = new MyClusterManagerRenderer(
@@ -317,15 +361,15 @@ public class UserListFragment extends Fragment implements
                     }catch (NumberFormatException e){
                         Log.d(TAG, "addMapMarkers: no avatar for " + userLocation.getUser().getUsername() + ", setting default.");
                     }
-                    ClusterMarker newClusterMarker = new ClusterMarker(
+                    UserClusterMarker newUserClusterMarker = new UserClusterMarker(
                             new LatLng(userLocation.getGeo_point().getLatitude(), userLocation.getGeo_point().getLongitude()),
                             userLocation.getUser().getUsername(),
                             snippet,
                             avatar,
                             userLocation.getUser()
                     );
-                    mClusterManager.addItem(newClusterMarker);
-                    mClusterMarkers.add(newClusterMarker);
+                    mClusterManager.addItem(newUserClusterMarker);
+                    mUserClusterMarkers.add(newUserClusterMarker);
 
                 }catch (NullPointerException e){
                     Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage() );
@@ -449,7 +493,7 @@ public class UserListFragment extends Fragment implements
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(getContext(), "unable to get current location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "unable to get current location", LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -460,7 +504,7 @@ public class UserListFragment extends Fragment implements
     }
 
     private void geoLocate(){   //Поиск локации в TextAutoComplete
-        Log.d(TAG, "geoLocate: geoLocating");
+        Log.d(TAG, "geoLocateTV: geoLocating");
 
         String searchString = mSearchText.getText().toString();
 
@@ -469,12 +513,12 @@ public class UserListFragment extends Fragment implements
         try{
             list = geocoder.getFromLocationName(searchString,1);
         }catch (IOException e){
-            Log.e(TAG, "geoLocate: IOException err:" + e.getMessage() );
+            Log.e(TAG, "geoLocateTV: IOException err:" + e.getMessage() );
         }
         if (list.size()>0){
             Address address = list.get(0);
-            Log.d(TAG, "geoLocate: found a location" + address.toString());
-            //Toast.makeText(getActivity(),address.toString(),toast.LENGTH_SHORT).show();
+            Log.i(TAG, "geoLocateTV: found a location: " + address.getAddressLine(0));
+            Toast.makeText(getActivity(),address.getAddressLine(0), Toast.LENGTH_LONG).show();
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),
                     DEFAULT_ZOOM, address.getAddressLine(0));
@@ -549,6 +593,7 @@ public class UserListFragment extends Fragment implements
         addMapMarkers();
         mGoogleMap.setOnPolylineClickListener(this);
         setUpClusterManager(mGoogleMap);
+        //addMapMarkersWithTouch(mGoogleMap);
     }
 
     @Override
@@ -652,7 +697,7 @@ public class UserListFragment extends Fragment implements
                                 }
                             }catch (NullPointerException e){
                                 Log.e(TAG, "onClick: NullPointerException: Couldn't open map." + e.getMessage() );
-                                Toast.makeText(getActivity(), "Couldn't open map", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Couldn't open map", LENGTH_SHORT).show();
                             }
 
                         }
@@ -851,10 +896,10 @@ public class UserListFragment extends Fragment implements
 
         String selectedUserId = mUserList.get(position).getUser_id();
 
-        for(ClusterMarker clusterMarker: mClusterMarkers){
-            if(selectedUserId.equals(clusterMarker.getUser().getUser_id())){
+        for(UserClusterMarker userClusterMarker : mUserClusterMarkers){
+            if(selectedUserId.equals(userClusterMarker.getUser().getUser_id())){
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(
-                        new LatLng(clusterMarker.getPosition().latitude, clusterMarker.getPosition().longitude)),
+                        new LatLng(userClusterMarker.getPosition().latitude, userClusterMarker.getPosition().longitude)),
                         600,
                         null
                 );

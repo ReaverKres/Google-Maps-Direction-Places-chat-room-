@@ -3,7 +3,7 @@ package com.test.googlemaps2019v2.models;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-public class ClusterMarker implements ClusterItem {
+public class UserClusterMarker implements ClusterItem {
 
     private LatLng position; // required field
     private String title; // required field
@@ -11,7 +11,7 @@ public class ClusterMarker implements ClusterItem {
     private int iconPicture;
     private User user;
 
-    public ClusterMarker(LatLng position, String title, String snippet, int iconPicture, User user) {
+    public UserClusterMarker(LatLng position, String title, String snippet, int iconPicture, User user) {
         this.position = position;
         this.title = title;
         this.snippet = snippet;
@@ -19,7 +19,7 @@ public class ClusterMarker implements ClusterItem {
         this.user = user;
     }
 
-    public ClusterMarker(double lat, double lng) {
+    public UserClusterMarker(double lat, double lng) {
         position = new LatLng(lat, lng);
     }
 

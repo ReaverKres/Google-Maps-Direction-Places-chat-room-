@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GoogleMaps2019v2</string>
+    <string name="app_name">EventFinder</string>
     <!-- Используется напрямую в models.PlaceApi  -->
     <string name="google_maps_api_key">AIzaSyB49OpBXRL_2k8ZyYlSKNev8knFjDf5jpk</string>
 

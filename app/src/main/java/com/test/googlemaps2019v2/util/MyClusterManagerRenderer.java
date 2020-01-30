@@ -6,23 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.models.ClusterMarker;
+import com.test.googlemaps2019v2.models.UserClusterMarker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.Cluster;
 
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 
-public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker>
+public class MyClusterManagerRenderer extends DefaultClusterRenderer<UserClusterMarker>
 {
 
     private final IconGenerator iconGenerator;
@@ -34,7 +32,7 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
     private LayoutInflater layoutInflater;
 
     public MyClusterManagerRenderer(Context context, GoogleMap googleMap,
-                                    ClusterManager<ClusterMarker> clusterManager) {
+                                    ClusterManager<UserClusterMarker> clusterManager) {
 
         super(context, googleMap, clusterManager);
 
@@ -58,7 +56,7 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
      * @param markerOptions
      */
     @Override
-    protected void onBeforeClusterItemRendered(ClusterMarker item, MarkerOptions markerOptions) {
+    protected void onBeforeClusterItemRendered(UserClusterMarker item, MarkerOptions markerOptions) {
 
         imageView.setImageResource(item.getIconPicture());
         Bitmap icon = iconGenerator.makeIcon();
@@ -66,7 +64,7 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
     }
 
 //    @Override
-//    protected void onBeforeClusterRendered(Cluster<ClusterMarker> cluster, MarkerOptions markerOptions) {
+//    protected void onBeforeClusterRendered(Cluster<UserClusterMarker> cluster, MarkerOptions markerOptions) {
 //        TextView singleClusterMarkerSizeTextView = clusterItemView.findViewById(R.id.singleClusterMarkerSizeTextView);
 //        singleClusterMarkerSizeTextView.setText(String.valueOf(cluster.getSize()));
 //        Bitmap icon = iconGenerator.makeIcon();
@@ -87,12 +85,12 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<ClusterMark
 
     /**
      * Update the GPS coordinate of a ClusterItem
-     * @param clusterMarker
+     * @param userClusterMarker
      */
-    public void setUpdateMarker(ClusterMarker clusterMarker) {
-        Marker marker = getMarker(clusterMarker);
+    public void setUpdateMarker(UserClusterMarker userClusterMarker) {
+        Marker marker = getMarker(userClusterMarker);
         if (marker != null) {
-            marker.setPosition(clusterMarker.getPosition());
+            marker.setPosition(userClusterMarker.getPosition());
         }
     }
 }
