@@ -20,7 +20,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 
-public class MyClusterManagerRenderer extends DefaultClusterRenderer<UserClusterMarker>
+public class UserClusterManagerRenderer extends DefaultClusterRenderer<UserClusterMarker>
 {
 
     private final IconGenerator iconGenerator;
@@ -31,8 +31,8 @@ public class MyClusterManagerRenderer extends DefaultClusterRenderer<UserCluster
     private final View clusterItemView;
     private LayoutInflater layoutInflater;
 
-    public MyClusterManagerRenderer(Context context, GoogleMap googleMap,
-                                    ClusterManager<UserClusterMarker> clusterManager) {
+    public UserClusterManagerRenderer(Context context, GoogleMap googleMap,
+                                      ClusterManager<UserClusterMarker> clusterManager) {
 
         super(context, googleMap, clusterManager);
 

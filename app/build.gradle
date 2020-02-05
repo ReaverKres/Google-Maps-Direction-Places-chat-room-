@@ -70,5 +70,10 @@ dependencies {
 
     // Circle ImageView
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    //Material design in neutral dialog
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
