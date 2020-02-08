@@ -14,24 +14,6 @@
         android:layout_margin="20dp"
         android:orientation="vertical">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/name"
-            android:hint="Name"
-            android:inputType="text"
-            android:text=""
-            android:textColor="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textSize="20sp"
-
-            app:met_floatingLabel="highlight"
-            app:met_baseColor="#0056d3"
-            app:met_primaryColor="#982360"
-            app:met_errorColor="#ddaa00"
-            app:met_singleLineEllipsis="true"
-            />
-
         <com.rengwuxian.materialedittext.MaterialAutoCompleteTextView
 
             android:id="@+id/addressAutoComplete"
@@ -56,6 +38,24 @@
             android:layout_height="wrap_content"
             android:id="@+id/eventDescription"
             android:hint="Description"
+            android:inputType="text"
+            android:text=""
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textSize="20sp"
+
+            app:met_floatingLabel="highlight"
+            app:met_baseColor="#0056d3"
+            app:met_primaryColor="#982360"
+            app:met_errorColor="#ddaa00"
+            app:met_singleLineEllipsis="true"
+            />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:hint="Date"
             android:inputType="text"
             android:text=""
             android:textColor="@color/colorPrimary"

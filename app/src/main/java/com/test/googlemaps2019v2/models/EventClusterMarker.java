@@ -1,8 +1,4 @@
 package com.test.googlemaps2019v2.models;
-
-import android.icu.text.Transliterator;
-import android.widget.ImageView;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -13,6 +9,7 @@ public class EventClusterMarker implements ClusterItem {
     private String title;
     private String snippet;
     private int iconPicture;
+    private Event event;
 
 
     public EventClusterMarker(LatLng position) {
