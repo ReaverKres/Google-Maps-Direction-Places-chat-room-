@@ -34,7 +34,7 @@
 
         <com.rengwuxian.materialedittext.MaterialAutoCompleteTextView
 
-            android:id="@+id/input_search_dialog"
+            android:id="@+id/addressAutoComplete"
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
