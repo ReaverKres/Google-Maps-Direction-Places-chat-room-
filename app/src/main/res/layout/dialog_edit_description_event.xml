@@ -20,7 +20,7 @@
             android:id="@+id/eventDescription"
             android:hint="Type your description here"
             android:inputType="textMultiLine"
-            android:lines="8"
+            android:lines="5"
             android:scrollbars="vertical"
             android:text=""
             android:textColor="@color/colorPrimary"

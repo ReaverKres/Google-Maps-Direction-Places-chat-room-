@@ -27,10 +27,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.test.googlemaps2019v2.EventClient;
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.UserClient;
 import com.test.googlemaps2019v2.adapters.ChatroomRecyclerAdapter;
 import com.test.googlemaps2019v2.models.Chatroom;
+import com.test.googlemaps2019v2.models.Event;
+import com.test.googlemaps2019v2.models.EventLocation;
 import com.test.googlemaps2019v2.models.User;
 import com.test.googlemaps2019v2.models.UserLocation;
 import com.test.googlemaps2019v2.services.LocationService;
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean mLocationPermissionGranted = false;     //Разрешение для включения Gps
     private FusedLocationProviderClient mFusedLocationClient;
     private UserLocation mUserLocation;
+    private EventLocation mEventLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements
         return false;
     }
 
-    private void getUserDetails(){ //1 //Получаем данные авторизованного пользователя
+    private void getDetails(){ //1 //Получаем данные авторизованного пользователя
         if(mUserLocation == null)//Изначально нет данных о место положении пользователя
             {
             mUserLocation = new UserLocation();
@@ -155,8 +159,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void getLastKnownLocation() { //Получаем координаты пользователя//2
         Log.d(TAG, "getLastKnownLocation: called.");
-
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -168,15 +170,14 @@ public class MainActivity extends AppCompatActivity implements
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mUserLocation.setGeo_point(geoPoint);
                     mUserLocation.setTimestamp(null);
-                    saveUserLocation();
+                    saveLocation();
                     startLocationService();
                 }
             }
         });
-
     }
 
-    private void saveUserLocation(){    //3 //Связывание с firebase, сохранение координат пользователя
+    private void saveLocation(){    //3 //Связывание с firebase, сохранение координат пользователя
 
         if(mUserLocation != null){
             DocumentReference locationRef = mDb
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
-                        Log.d(TAG, "saveUserLocation: \ninserted user location into database." +
+                        Log.d(TAG, "saveLocation: \ninserted user location into database." +
                                 "\n latitude: " + mUserLocation.getGeo_point().getLatitude() +
                                 "\n longitude: " + mUserLocation.getGeo_point().getLongitude());
                     }
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements
             });
         }
     }
+
 
     private boolean checkMapServices(){
         if(isServicesOK()){
@@ -240,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             getChatrooms();
-            getUserDetails();
+            getDetails();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -293,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
                 if(mLocationPermissionGranted){
                     getChatrooms();
-                    getUserDetails();
+                    getDetails();
                 }
                 else{
                     getLocationPermission();
@@ -442,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements
         if(checkMapServices()){
             if(mLocationPermissionGranted){
                 getChatrooms();
-                getUserDetails();
+                getDetails();
             }
             else{
                 getLocationPermission();

@@ -26,10 +26,12 @@
 
     <!-- Firestore Strings -->
     <string name="collection_users">Users</string>
+    <string name="collection_event">Event</string>
     <string name="collection_chatrooms">Chatrooms</string>
     <string name="collection_chat_messages">Chat Messages</string>
     <string name="collection_chatroom_user_list">User List</string>
     <string name="collection_user_locations">User Locations</string>
+    <string name="collection_event_locations">Event Locations</string>
 
     <!-- Intent extras -->
     <string name="intent_chatroom">intent_chatroom</string>

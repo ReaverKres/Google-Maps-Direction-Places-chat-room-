@@ -39,7 +39,6 @@ public class RegisterActivity extends AppCompatActivity implements
     //vars
     private FirebaseFirestore mDb;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

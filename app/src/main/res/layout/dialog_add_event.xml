@@ -37,8 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/eventDescription"
+            android:inputType="textMultiLine"
+            android:lines="2"
             android:hint="Description"
-            android:inputType="text"
             android:text=""
             android:textColor="@color/colorPrimary"
             android:textColorHint="@color/colorPrimaryDark"
@@ -48,7 +49,7 @@
             app:met_baseColor="#0056d3"
             app:met_primaryColor="#982360"
             app:met_errorColor="#ddaa00"
-            app:met_singleLineEllipsis="true"
+            app:met_singleLineEllipsis="false"
             />
 
         <com.rengwuxian.materialedittext.MaterialEditText

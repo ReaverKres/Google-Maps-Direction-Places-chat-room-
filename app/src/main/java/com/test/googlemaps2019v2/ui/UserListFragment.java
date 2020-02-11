@@ -1,9 +1,11 @@
 package com.test.googlemaps2019v2.ui;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +38,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.firestore.GeoPoint;
 import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.test.googlemaps2019v2.R;
@@ -45,6 +49,7 @@ import com.test.googlemaps2019v2.adapters.PlaceAutoSuggestAdapter;
 import com.test.googlemaps2019v2.adapters.UserRecyclerAdapter;
 import com.test.googlemaps2019v2.models.Event;
 import com.test.googlemaps2019v2.models.EventClusterMarker;
+import com.test.googlemaps2019v2.models.EventLocation;
 import com.test.googlemaps2019v2.models.UserClusterMarker;
 import com.test.googlemaps2019v2.models.PolylineData;
 import com.test.googlemaps2019v2.models.User;
@@ -103,7 +108,6 @@ public class UserListFragment extends Fragment implements
     private MapView mMapView;
     private RelativeLayout mMapContainer;
     private AutoCompleteTextView mSearchText;
-    private AutoCompleteTextView mSearchTextDialog;
     private ImageView mGps;
     private ImageView mPlus;
 
@@ -114,21 +118,19 @@ public class UserListFragment extends Fragment implements
     private MaterialEditText eventDescription;
     private MaterialEditText eventType;
 
-
     //vars
-    private Address address;
-    private List<Address> list = new ArrayList<>();
-    private List<Address> listName = new ArrayList<>();
+    private List<Address> addressList = new ArrayList<>();
+    private Address eventAddress;
     private ArrayList<User> mUserList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
+    private ArrayList<EventLocation> mEventLocations = new ArrayList<>();
     private ArrayList<EventClusterMarker> mEventClusterMarkers= new ArrayList<>();
     private ArrayList<UserClusterMarker> mUserClusterMarkers = new ArrayList<>();
     private ArrayList<Marker> mTripMarkers = new ArrayList<>();
     private ArrayList<PolylineData> mPolyLinesData = new ArrayList<>();
-    private UserRecyclerAdapter mUserRecyclerAdapter;
     private GoogleMap mGoogleMap;
     private UserLocation mUserPosition;
-    private LatLngBounds mMapBoundary;
+
     private ClusterManager<UserClusterMarker> userClusterManager;
     private ClusterManager<EventClusterMarker> eventClusterManager;
     private UserClusterManagerRenderer userClusterManagerRenderer;
@@ -137,11 +139,11 @@ public class UserListFragment extends Fragment implements
     private GeoApiContext mGeoApiContext;
     private Marker mSelectedMarker = null;
 
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Boolean mLocationPermissionsGranted = true;
-
     private Event event;
-    private EventClusterMarker newEventClusterMarker;
+    private EventLocation mEventLocation;
+    private FirebaseFirestore mDb;
+    private DocumentReference eventRef;
+
 
     public static UserListFragment newInstance() {
         return new UserListFragment();
@@ -150,7 +152,8 @@ public class UserListFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mUserLocations.size() == 0) { // make sure the list doesn't duplicate by navigating back
+        mDb = FirebaseFirestore.getInstance();
+        if (mUserLocations.size() == 0) { // make sure the addressList doesn't duplicate by navigating back
             if (getArguments() != null) {
                 final ArrayList<User> users = getArguments().getParcelableArrayList(getString(R.string.intent_user_list));
                 mUserList.addAll(users);
@@ -159,7 +162,6 @@ public class UserListFragment extends Fragment implements
                 mUserLocations.addAll(locations);
             }
         }
-       // initAutoCompleteFragment();
     }
 
     @Nullable
@@ -172,7 +174,6 @@ public class UserListFragment extends Fragment implements
         view.findViewById(R.id.btn_reset_map).setOnClickListener(this);
         mMapContainer = view.findViewById(R.id.map_container);
         mSearchText = view.findViewById(R.id.input_search);
-        mSearchTextDialog = view.findViewById(R.id.addressAutoComplete);
         mGps = view.findViewById(R.id.ic_gps);
         mPlus = view.findViewById(R.id.ic_plus);
 
@@ -203,13 +204,6 @@ public class UserListFragment extends Fragment implements
         mHandler.removeCallbacks(mRunnable);
     }
 
-    public ArrayList<UserClusterMarker> getmUserClusterMarkers() {
-        return mUserClusterMarkers;
-    }
-
-    public ArrayList<UserLocation> getmUserLocations() {
-        return mUserLocations;
-    }
 
     private void retrieveUserLocations(){
         Log.d(TAG, "retrieveUserLocations: retrieving location of all users in the chatroom.");
@@ -241,8 +235,6 @@ public class UserListFragment extends Fragment implements
                                         mUserClusterMarkers.get(i).setPosition(updatedLatLng);
                                         userClusterManagerRenderer.setUpdateMarker(mUserClusterMarkers.get(i));
                                     }
-
-
                                 } catch (NullPointerException e) {
                                     Log.e(TAG, "retrieveUserLocations: NullPointerException: " + e.getMessage());
                                 }
@@ -254,7 +246,59 @@ public class UserListFragment extends Fragment implements
         }catch (IllegalStateException e){
             Log.e(TAG, "retrieveUserLocations: Fragment was destroyed during Firestore query. Ending query." + e.getMessage() );
         }
+    }
 
+    private void getEventDetails(){     //1 //Получаем данные авторизованного пользователя
+            if(mEventLocation == null)//Изначально нет данных о местоположении мероприятия
+            {
+                mEventLocation = new EventLocation();
+                eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+
+                            Log.d(TAG, "getEventDetails: successfully set the event.");
+                            //Event event = task.getResult().toObject(Event.class);
+                            mEventLocation.setEvent(event);
+                            getLastKnownLocation();
+                        }
+                    }
+                });
+            }
+            else{
+                getLastKnownLocation();
+            }
+        }
+
+    private void getLastKnownLocation() { //Получаем координаты мероприятия//2
+        Log.d(TAG, "getLastKnownLocation: called.");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        GeoPoint geoPoint = new GeoPoint(eventAddress.getLatitude(), eventAddress.getLongitude());
+        mEventLocation.setGeo_point(geoPoint);
+        mEventLocation.setTimestamp(null);
+        saveEventLocation();
+    }
+
+    private void saveEventLocation(){    //3 //Связывание с firebase, сохранение координат пользователя
+
+        if(mEventLocation != null){
+            DocumentReference locationRef = mDb
+                    .collection(getString(R.string.collection_event_locations))
+                    .document();
+            mEventLocation.setEventLocation_id(locationRef.getId());
+            locationRef.set(mEventLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "saveEventLocation: \ninserted event location into database." +
+                                "\n latitude: " + mEventLocation.getGeo_point().getLatitude() +
+                                "\n longitude: " + mEventLocation.getGeo_point().getLongitude());
+                    }
+                }
+            });
+        }
     }
 
     private void resetMap(){
@@ -295,7 +339,6 @@ public class UserListFragment extends Fragment implements
                 eventClusterManager.setRenderer(eventClusterManagerRenderer);
             }
         }
-
         // 3
         googleMap.setOnCameraIdleListener(userClusterManager);
         addMapMarkersWithTouch();
@@ -314,14 +357,15 @@ public class UserListFragment extends Fragment implements
         Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
 
         try {
-            list = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
         } catch (IOException e) {
             Log.e(TAG, "geoLocateMarker: IOException err: " + e.getMessage());
         }
-        if (list.size() > 0) {
-            address = list.get(0);
-            Log.i(TAG, "geoLocateMarker: found a location: " + address.getAddressLine(0));
-            Toast.makeText(getActivity(), address.getAddressLine(0), Toast.LENGTH_LONG).show();
+        if (addressList.size() > 0) {
+            //vars
+            eventAddress = addressList.get(0);
+            Log.i(TAG, "geoLocateMarker: found a location: " + eventAddress.getAddressLine(0));
+            Toast.makeText(getActivity(), eventAddress.getAddressLine(0), Toast.LENGTH_LONG).show();
         }
         String title = "Event by Anonymous";
         for (UserLocation userLocation : mUserLocations) {
@@ -329,12 +373,14 @@ public class UserListFragment extends Fragment implements
                 title = "Event by " + userLocation.getUser().getUsername();
             }
         }
+        EventClusterMarker newEventClusterMarker;
         if (event != null) {
             newEventClusterMarker = new EventClusterMarker(latLng, title,
-                    list.get(0).getAddressLine(0) + event.toString());
+                    event.toString());
+            getEventDetails();
         }else {
             newEventClusterMarker = new EventClusterMarker(latLng, title,
-                list.get(0).getAddressLine(0));
+                addressList.get(0).getAddressLine(0));
         }
             mEventClusterMarkers.add(newEventClusterMarker);
             eventClusterManager.addItem(newEventClusterMarker);
@@ -342,6 +388,7 @@ public class UserListFragment extends Fragment implements
 
             mGoogleMap.setInfoWindowAdapter(eventClusterManager.getMarkerManager());  // 3
             eventClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity())); // 4
+
     }
 
     private void addUserMapMarkers(){
@@ -399,29 +446,10 @@ public class UserListFragment extends Fragment implements
             }
             userClusterManager.cluster();
 
-            setCameraView();
+            getDeviceLocation();    //setCameraView() - deleted
         }
     }
 
-    /**
-     * Determines the view boundary then sets the camera
-     * Sets the view
-     */
-    private void setCameraView() {
-        Log.d(TAG, "setCameraView: called");
-        // Set a boundary to start
-        double bottomBoundary = mUserPosition.getGeo_point().getLatitude() - .1;
-        double leftBoundary = mUserPosition.getGeo_point().getLongitude() - .1;
-        double topBoundary = mUserPosition.getGeo_point().getLatitude() + .1;
-        double rightBoundary = mUserPosition.getGeo_point().getLongitude() + .1;
-
-        mMapBoundary = new LatLngBounds(
-                new LatLng(bottomBoundary, leftBoundary),
-                new LatLng(topBoundary, rightBoundary)
-        );
-
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0));
-    }
 
     private void setUserPosition() {
         Log.d(TAG, "setUserPosition: called");
@@ -455,7 +483,7 @@ public class UserListFragment extends Fragment implements
     }
 
     private void initUserListRecyclerView() {
-        mUserRecyclerAdapter = new UserRecyclerAdapter(mUserList, this);
+        UserRecyclerAdapter mUserRecyclerAdapter = new UserRecyclerAdapter(mUserList, this);
         mUserListRecyclerView.setAdapter(mUserRecyclerAdapter);
         mUserListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -477,7 +505,6 @@ public class UserListFragment extends Fragment implements
                     //execute our method for searching
                     geoLocate(mSearchText);
                 }
-
                 return false;
             }
         });
@@ -500,6 +527,8 @@ public class UserListFragment extends Fragment implements
     }
 
     private void addEvent(){
+            eventRef = mDb.collection(getString(R.string.collection_event))
+                .document();
 
             androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity());
             dialog.setTitle("Add event").setMessage("Type event description");
@@ -525,44 +554,61 @@ public class UserListFragment extends Fragment implements
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Log.d(TAG, "onClick");
-                    if (TextUtils.isEmpty(eventDate.getText().toString())) {
-                        Toast.makeText(getContext(), "Empty field name", LENGTH_SHORT).show();
-                        Log.d(TAG, "Empty field name");
-                        return;
-                    }
-                    if (TextUtils.isEmpty(eventAddressDialog.getText().toString())) {
-                        Toast.makeText(getContext(), "Empty field address", LENGTH_SHORT).show();
-                        Log.d(TAG, "Empty field address");
-                        return;
-                    }
-                    if (TextUtils.isEmpty(eventDescription.getText().toString())) {
-                        Toast.makeText(getContext(), "empty field event description", LENGTH_SHORT).show();
-                        Log.d(TAG, "Empty field event description");
-                        return;
-                    }
-                    if (eventType.getText().toString().length() < 5) {
-                        Toast.makeText(getContext(), "empty field type", LENGTH_SHORT).show();
-                        Log.d(TAG, "Empty field type");
-                        return;
-                    }
-                    event = new Event(eventDescription.getText().toString(),
+                    if (checkField()) return;
+                    event = new Event(eventAddressDialog.getText().toString(),
+                            eventDescription.getText().toString(),
                             eventDate.getText().toString(),
                             eventType.getText().toString());
+
+                    event.setEvent_id(eventRef.getId());
+
+                    eventRef.set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(getContext(),"Add event on DataBase",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(getContext(),"Add event on DataBase failed.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                     geoLocate(eventAddressDialog);
                 }
             });
             dialog.show();
+    }
 
+    private boolean checkField() {
+        if (TextUtils.isEmpty(eventDate.getText().toString())) {
+            Toast.makeText(getContext(), "Empty field name", LENGTH_SHORT).show();
+            Log.d(TAG, "Empty field name");
+            return true;
+        }
+        if (TextUtils.isEmpty(eventAddressDialog.getText().toString())) {
+            Toast.makeText(getContext(), "Empty field eventAddress", LENGTH_SHORT).show();
+            Log.d(TAG, "Empty field eventAddress");
+            return true;
+        }
+        if (TextUtils.isEmpty(eventDescription.getText().toString())) {
+            Toast.makeText(getContext(), "empty field event description", LENGTH_SHORT).show();
+            Log.d(TAG, "Empty field event description");
+            return true;
+        }
+        if (eventType.getText().toString().length() < 5) {
+            Toast.makeText(getContext(), "empty field type", LENGTH_SHORT).show();
+            Log.d(TAG, "Empty field type");
+            return true;
+        }
+        return false;
     }
 
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         try{
-            if(mLocationPermissionsGranted){
-
                 final Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -574,14 +620,12 @@ public class UserListFragment extends Fragment implements
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM,
                                     "My Location");
-
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
                             Toast.makeText(getContext(), "unable to get current location", LENGTH_SHORT).show();
                         }
                     }
                 });
-            }
         }catch (SecurityException e){
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
         }
@@ -837,7 +881,7 @@ public class UserListFragment extends Fragment implements
                                             Toast.makeText(getActivity().getApplicationContext(),"You have not added a description",Toast.LENGTH_LONG).show();
                                         }
                                         else {
-                                            marker.setSnippet(list.get(0).getAddressLine(0)+ "\n" + descriptionText.getText().toString());
+                                            marker.setSnippet(addressList.get(0).getAddressLine(0)+ "\n" + descriptionText.getText().toString());
                                         }
                                     }
                                 });
@@ -946,7 +990,7 @@ public class UserListFragment extends Fragment implements
         });
     }
 
-    public void zoomRoute(List<LatLng> lstLatLngRoute) {
+    private void zoomRoute(List<LatLng> lstLatLngRoute) {
 
         if (mGoogleMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
 
@@ -1015,22 +1059,3 @@ public class UserListFragment extends Fragment implements
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
