@@ -1,5 +1,6 @@
 package com.test.googlemaps2019v2.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,8 @@ import com.test.googlemaps2019v2.UserClient;
 import com.test.googlemaps2019v2.adapters.ChatMessageRecyclerAdapter;
 import com.test.googlemaps2019v2.models.ChatMessage;
 import com.test.googlemaps2019v2.models.Chatroom;
+import com.test.googlemaps2019v2.models.Event;
+import com.test.googlemaps2019v2.models.EventLocation;
 import com.test.googlemaps2019v2.models.User;
 import com.test.googlemaps2019v2.models.UserLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,14 +54,17 @@ public class ChatroomActivity extends AppCompatActivity implements
     private EditText mMessage;
 
     //vars
-    private ListenerRegistration mChatMessageEventListener, mUserListEventListener;
+    private ListenerRegistration mChatMessageEventListener, mEventListListener;
     private RecyclerView mChatMessageRecyclerView;
     private ChatMessageRecyclerAdapter mChatMessageRecyclerAdapter;
     private FirebaseFirestore mDb;
     private ArrayList<ChatMessage> mMessages = new ArrayList<>();
     private Set<String> mMessageIds = new HashSet<>();
     private ArrayList<User> mUserList = new ArrayList<>();
+    private ArrayList<Event> mEventList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
+    private ArrayList<EventLocation> mEventLocations = new ArrayList<>();
+
 
 
     @Override
@@ -75,6 +81,8 @@ public class ChatroomActivity extends AppCompatActivity implements
         getIncomingIntent();
         initChatroomRecyclerView();
         getChatroomUsers();
+        getChatroomEvents();
+        getChatroomEventsLocation();
     }
 
     private void getUserLocation(User user){
@@ -85,16 +93,13 @@ public class ChatroomActivity extends AppCompatActivity implements
         locationsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
                 if(task.isSuccessful()){
                     if(task.getResult().toObject(UserLocation.class) != null){
-
                         mUserLocations.add(task.getResult().toObject(UserLocation.class));
                     }
                 }
             }
         });
-
     }
 
     private void getChatMessages(){
@@ -113,7 +118,6 @@ public class ChatroomActivity extends AppCompatActivity implements
                             Log.e(TAG, "onEvent: Listen failed.", e);
                             return;
                         }
-
                         if(queryDocumentSnapshots != null){
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
@@ -123,10 +127,8 @@ public class ChatroomActivity extends AppCompatActivity implements
                                     mMessages.add(message);
                                     mChatMessageRecyclerView.smoothScrollToPosition(mMessages.size() - 1);
                                 }
-
                             }
                             mChatMessageRecyclerAdapter.notifyDataSetChanged();
-
                         }
                     }
                 });
@@ -139,28 +141,84 @@ public class ChatroomActivity extends AppCompatActivity implements
                 .document(mChatroom.getChatroom_id())
                 .collection(getString(R.string.collection_chatroom_user_list));
 
-        mUserListEventListener = usersRef
+        mEventListListener = usersRef
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.e(TAG, "onEvent: Listen failed.", e);
+                            Log.e(TAG, "(getChatroomUsers)onEvent: Listen failed.", e);
                             return;
                         }
-
                         if(queryDocumentSnapshots != null){
-
                             // Clear the list and add all the users again
                             mUserList.clear();
                             mUserList = new ArrayList<>();
-
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                                 User user = doc.toObject(User.class);
                                 mUserList.add(user);
                                 getUserLocation(user);
                             }
-
                             Log.d(TAG, "onEvent: user list size: " + mUserList.size());
+                        }
+                    }
+                });
+    }
+
+    private void getChatroomEvents(){
+
+        CollectionReference eventsRef = mDb
+                .collection(getString(R.string.collection_chatrooms))
+                .document(mChatroom.getChatroom_id())
+                .collection(getString(R.string.collection_event));
+
+        mEventListListener = eventsRef
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
+                                        @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e(TAG, "(getChatroomEvents) onEvent: Listen failed.", e);
+                            return;
+                        }
+                        if(queryDocumentSnapshots != null){
+                            // Clear the list and add all the users again
+                            mEventList.clear();
+                            mEventList = new ArrayList<>();
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                Event event = doc.toObject(Event.class);
+                                mEventList.add(event);
+                            }
+                            Log.d(TAG, "onEvent: user list size: " + mEventList.size());
+                        }
+                    }
+                });
+    }
+
+    private void getChatroomEventsLocation(){
+
+        CollectionReference eventsRef = mDb
+                .collection(getString(R.string.collection_chatrooms))
+                .document(mChatroom.getChatroom_id())
+                .collection(getString(R.string.collection_event_locations));
+
+        mEventListListener = eventsRef
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
+                                        @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e(TAG, "(getChatroomEvents) onEvent: Listen failed.", e);
+                            return;
+                        }
+                        if(queryDocumentSnapshots != null){
+                            // Clear the list and add all the events again
+                            mEventLocations.clear();
+                            mEventLocations = new ArrayList<>();
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                EventLocation eventLocation = doc.toObject(EventLocation.class);
+                                mEventLocations.add(eventLocation);
+                            }
+                            Log.d(TAG, "onEvent: user list size: " + mEventList.size());
                         }
                     }
                 });
@@ -184,13 +242,11 @@ public class ChatroomActivity extends AppCompatActivity implements
                                 mChatMessageRecyclerView.smoothScrollToPosition(
                                         mChatMessageRecyclerView.getAdapter().getItemCount() - 1);
                             }
-
                         }
                     }, 100);
                 }
             }
         });
-
     }
 
 
@@ -239,6 +295,10 @@ public class ChatroomActivity extends AppCompatActivity implements
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(getString(R.string.intent_user_list), mUserList);
         bundle.putParcelableArrayList(getString(R.string.intent_user_locations), mUserLocations);
+        bundle.putParcelableArrayList(getString(R.string.intent_event_list), mEventList);
+        bundle.putParcelableArrayList(getString(R.string.intent_event_locations), mEventLocations);
+        bundle.putString("chat_id",mChatroom.getChatroom_id());
+
         fragment.setArguments(bundle);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -301,8 +361,8 @@ public class ChatroomActivity extends AppCompatActivity implements
         if(mChatMessageEventListener != null){
             mChatMessageEventListener.remove();
         }
-        if(mUserListEventListener != null){
-            mUserListEventListener.remove();
+        if(mEventListListener != null){
+            mEventListListener.remove();
         }
     }
 
@@ -339,7 +399,6 @@ public class ChatroomActivity extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
             }
         }
-
     }
 
     @Override

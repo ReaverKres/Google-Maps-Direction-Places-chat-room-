@@ -122,6 +122,7 @@ public class UserListFragment extends Fragment implements
     private List<Address> addressList = new ArrayList<>();
     private Address eventAddress;
     private ArrayList<User> mUserList = new ArrayList<>();
+    private ArrayList<Event> mEventList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
     private ArrayList<EventLocation> mEventLocations = new ArrayList<>();
     private ArrayList<EventClusterMarker> mEventClusterMarkers= new ArrayList<>();
@@ -139,6 +140,8 @@ public class UserListFragment extends Fragment implements
     private GeoApiContext mGeoApiContext;
     private Marker mSelectedMarker = null;
 
+
+
     private Event event;
     private EventLocation mEventLocation;
     private FirebaseFirestore mDb;
@@ -153,13 +156,17 @@ public class UserListFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDb = FirebaseFirestore.getInstance();
-        if (mUserLocations.size() == 0) { // make sure the addressList doesn't duplicate by navigating back
+        if (mUserLocations.size() == 0 && mEventLocations.size() == 0) { // make sure the addressList doesn't duplicate by navigating back
             if (getArguments() != null) {
                 final ArrayList<User> users = getArguments().getParcelableArrayList(getString(R.string.intent_user_list));
                 mUserList.addAll(users);
+                final ArrayList<UserLocation> userLocations = getArguments().getParcelableArrayList(getString(R.string.intent_user_locations));
+                mUserLocations.addAll(userLocations);
 
-                final ArrayList<UserLocation> locations = getArguments().getParcelableArrayList(getString(R.string.intent_user_locations));
-                mUserLocations.addAll(locations);
+                final ArrayList<Event> events = getArguments().getParcelableArrayList(getString(R.string.intent_event_list));
+                mEventList.addAll(events);
+                final ArrayList<EventLocation> eventLocations = getArguments().getParcelableArrayList(getString(R.string.intent_event_locations));
+                mEventLocations.addAll(eventLocations);
             }
         }
     }
@@ -179,7 +186,6 @@ public class UserListFragment extends Fragment implements
 
         initUserListRecyclerView();
         initGoogleMap(savedInstanceState);
-
         setUserPosition();
         init();
         return view;
@@ -284,10 +290,18 @@ public class UserListFragment extends Fragment implements
     private void saveEventLocation(){    //3 //Связывание с firebase, сохранение координат пользователя
 
         if(mEventLocation != null){
+//            DocumentReference locationRef = mDb
+//                    .collection(getString(R.string.collection_event_locations))
+//                    .document();
+            String chatId = getArguments().getString("chat_id");
             DocumentReference locationRef = mDb
+                    .collection(getString(R.string.collection_chatrooms))
+                    .document(chatId)
                     .collection(getString(R.string.collection_event_locations))
                     .document();
+
             mEventLocation.setEventLocation_id(locationRef.getId());
+            mEventLocation.setEvent(event); //*********************
             locationRef.set(mEventLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -527,8 +541,22 @@ public class UserListFragment extends Fragment implements
     }
 
     private void addEvent(){
-            eventRef = mDb.collection(getString(R.string.collection_event))
+//            eventRef = mDb.collection(getString(R.string.collection_event))
+//                .document();
+
+        String chatId = getArguments().getString("chat_id");
+        Log.d(TAG, "addEvent: chatroomID: " + chatId);
+
+        eventRef = mDb
+                .collection(getString(R.string.collection_chatrooms))
+                .document(chatId)
+                .collection(getString(R.string.collection_event))
                 .document();
+        //eventRef.set(event); // Don't care about listening for completion.
+
+//        EventClient eventClient = new EventClient();
+//        Event event = eventClient.getEvent();
+
 
             androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity());
             dialog.setTitle("Add event").setMessage("Type event description");

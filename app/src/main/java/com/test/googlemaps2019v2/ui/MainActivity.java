@@ -306,9 +306,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initSupportActionBar(){
-        setTitle("Чаты");
+        setTitle("Chats");
     }
-
 
     @Override
     public void onClick(View view) {
