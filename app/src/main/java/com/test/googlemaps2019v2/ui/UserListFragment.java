@@ -121,6 +121,7 @@ public class UserListFragment extends Fragment implements
     //vars
     private List<Address> addressList = new ArrayList<>();
     private Address eventAddress;
+    private String addressParam;
     private ArrayList<User> mUserList = new ArrayList<>();
     private ArrayList<Event> mEventList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
@@ -254,6 +255,52 @@ public class UserListFragment extends Fragment implements
         }
     }
 
+//    private void retrieveEventLocations(){
+//        Log.d(TAG, "retrieveUserLocations: retrieving location of all users in the chatroom.");
+//
+//        try{
+//            for(final EventClusterMarker eventClusterMarker : mEventClusterMarkers){
+//                String chatId = getArguments().getString("chat_id");
+//                DocumentReference eventLocationRef = FirebaseFirestore.getInstance()
+//                        .collection(getString(R.string.collection_chatrooms))
+//                        .document(chatId)
+//                        .collection(getString(R.string.collection_event_locations))
+//                        .document();
+//
+//
+//                eventLocationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if(task.isSuccessful()){
+//
+//                            final EventLocation updatedEventLocation = task.getResult().toObject(EventLocation.class);
+//
+//                            // update the location
+//                            for (int i = 0; i < mEventClusterMarkers.size(); i++) {
+//                                try {
+//                                    if (mEventClusterMarkers.get(i).getEvent().getEvent_id().equals(updatedEventLocation.getEvent().getEvent_id())) {
+//
+//                                        LatLng updatedLatLng = new LatLng(
+//                                                updatedEventLocation.getGeo_point().getLatitude(),
+//                                                updatedEventLocation.getGeo_point().getLongitude()
+//                                        );
+//
+//                                        mEventClusterMarkers.get(i).setPosition(updatedLatLng);
+//                                        eventClusterManagerRenderer.setUpdateMarker(mEventClusterMarkers.get(i));
+//                                    }
+//                                } catch (NullPointerException e) {
+//                                    Log.e(TAG, "retrieveUserLocations: NullPointerException: " + e.getMessage());
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//        }catch (IllegalStateException e){
+//            Log.e(TAG, "retrieveUserLocations: Fragment was destroyed during Firestore query. Ending query." + e.getMessage() );
+//        }
+//    }
+
     private void getEventDetails(){     //1 //Получаем данные авторизованного пользователя
             if(mEventLocation == null)//Изначально нет данных о местоположении мероприятия
             {
@@ -299,7 +346,11 @@ public class UserListFragment extends Fragment implements
                     .document(chatId)
                     .collection(getString(R.string.collection_event_locations))
                     .document();
-
+            if (event.getDescription().isEmpty() && event.getDate().isEmpty()
+                    && event.getType().isEmpty())
+            {
+                return;
+            }
             mEventLocation.setEventLocation_id(locationRef.getId());
             mEventLocation.setEvent(event); //*********************
             locationRef.set(mEventLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -313,6 +364,7 @@ public class UserListFragment extends Fragment implements
                 }
             });
         }
+        event = null;   //***************************
     }
 
     private void resetMap(){
@@ -331,6 +383,15 @@ public class UserListFragment extends Fragment implements
             if(mPolyLinesData.size() > 0){
                 mPolyLinesData.clear();
                 mPolyLinesData = new ArrayList<>();
+            }
+
+            if(eventClusterManager != null){
+                eventClusterManager.clearItems();
+            }
+
+            if (mEventClusterMarkers.size() > 0) {
+                mEventClusterMarkers.clear();
+                mEventClusterMarkers = new ArrayList<>();
             }
         }
     }
@@ -362,14 +423,15 @@ public class UserListFragment extends Fragment implements
            mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                @Override
                public void onMapLongClick(LatLng latLng) {
-                   addMapMarkers(latLng);
+//                   addMapMarkers(latLng);
+                   geocoder_adressInit(latLng);
+                   addEvent(addressParam);
                }
            });
         }
 
-    private void addMapMarkers(LatLng latLng) {
+    private void geocoder_adressInit(LatLng latLng) {
         Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
-
         try {
             addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
         } catch (IOException e) {
@@ -378,9 +440,14 @@ public class UserListFragment extends Fragment implements
         if (addressList.size() > 0) {
             //vars
             eventAddress = addressList.get(0);
+            addressParam = eventAddress.getAddressLine(0);
             Log.i(TAG, "geoLocateMarker: found a location: " + eventAddress.getAddressLine(0));
             Toast.makeText(getActivity(), eventAddress.getAddressLine(0), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void addMapMarkers(LatLng latLng) {
+        geocoder_adressInit(latLng);
         String title = "Event by Anonymous";
         for (UserLocation userLocation : mUserLocations) {
             if (userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())) {
@@ -402,7 +469,6 @@ public class UserListFragment extends Fragment implements
 
             mGoogleMap.setInfoWindowAdapter(eventClusterManager.getMarkerManager());  // 3
             eventClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity())); // 4
-
     }
 
     private void addUserMapMarkers(){
@@ -464,6 +530,52 @@ public class UserListFragment extends Fragment implements
         }
     }
 
+    private void addEventMapMarkersFromFB(){
+
+        if(mGoogleMap != null){
+            //resetMap();
+
+            if(eventClusterManager == null){
+                eventClusterManager = new ClusterManager<EventClusterMarker>(getActivity().getApplicationContext(), mGoogleMap);
+            }
+            if(eventClusterManagerRenderer == null){
+                eventClusterManagerRenderer = new EventClusterManagerRenderer(
+                        getActivity(),
+                        mGoogleMap,
+                        eventClusterManager
+                );
+                //eventClusterManagerRenderer.setMinClusterSize(2);
+                eventClusterManager.setRenderer(eventClusterManagerRenderer);
+            }
+            mGoogleMap.setOnInfoWindowClickListener(this);
+
+            for(EventLocation eventLocation: mEventLocations){
+
+                Log.d(TAG, "addEventMapMarkers: location: " + eventLocation.getGeo_point().toString());
+                try{
+                    String title = "Event by Anonymous";
+//                    if (eventLocation.getUser_id().equals(FirebaseAuth.getInstance().getUid())) {
+//                        title = "Event by " + userLocation.getUser().getUsername();
+//                    }
+                    EventClusterMarker newEventClusterMarker = new EventClusterMarker(
+                            new LatLng(eventLocation.getGeo_point().getLatitude(), eventLocation.getGeo_point().getLongitude()),
+                            title,
+                            eventLocation.getEvent().toString());
+                    eventClusterManager.addItem(newEventClusterMarker);
+                    mEventClusterMarkers.add(newEventClusterMarker);
+
+                }catch (NullPointerException e){
+                    Log.e(TAG, "addUserMapMarkers: NullPointerException: " + e.getMessage() );
+                }
+            }
+            eventClusterManager.cluster();
+
+            mGoogleMap.setInfoWindowAdapter(eventClusterManager.getMarkerManager());  // 3
+            eventClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity())); // 4
+
+            getDeviceLocation();    //setCameraView() - deleted
+        }
+    }
 
     private void setUserPosition() {
         Log.d(TAG, "setUserPosition: called");
@@ -535,12 +647,12 @@ public class UserListFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked Plus icon");
-                addEvent();
+                addEvent("");
             }
         });
     }
 
-    private void addEvent(){
+    private void addEvent(String addressParam){
 //            eventRef = mDb.collection(getString(R.string.collection_event))
 //                .document();
 
@@ -552,6 +664,7 @@ public class UserListFragment extends Fragment implements
                 .document(chatId)
                 .collection(getString(R.string.collection_event))
                 .document();
+
         //eventRef.set(event); // Don't care about listening for completion.
 
 //        EventClient eventClient = new EventClient();
@@ -571,7 +684,9 @@ public class UserListFragment extends Fragment implements
             eventDescription = addEvent.findViewById(R.id.eventDescription);
             eventType = addEvent.findViewById(R.id.type);
             eventAddressDialog.setAdapter(new PlaceAutoSuggestAdapter(getContext(),android.R.layout.simple_list_item_1));
-
+            if (addressParam != null) {
+                eventAddressDialog.setText(addressParam);
+            }
             dialog.setNegativeButton("Отменить", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -582,13 +697,19 @@ public class UserListFragment extends Fragment implements
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Log.d(TAG, "onClick");
+
                     if (checkField()) return;
+
                     event = new Event(eventAddressDialog.getText().toString(),
                             eventDescription.getText().toString(),
                             eventDate.getText().toString(),
                             eventType.getText().toString());
 
-                    event.setEvent_id(eventRef.getId());
+                    if (event.getDescription().isEmpty() && event.getDate().isEmpty()
+                    && event.getType().isEmpty())
+                    {
+                        geoLocate(eventAddressDialog);
+                    }
 
                     eventRef.set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -610,26 +731,26 @@ public class UserListFragment extends Fragment implements
     }
 
     private boolean checkField() {
-        if (TextUtils.isEmpty(eventDate.getText().toString())) {
-            Toast.makeText(getContext(), "Empty field name", LENGTH_SHORT).show();
-            Log.d(TAG, "Empty field name");
-            return true;
-        }
+//        if (TextUtils.isEmpty(eventDate.getText().toString())) {
+//            Toast.makeText(getContext(), "Empty field name", LENGTH_SHORT).show();
+//            Log.d(TAG, "Empty field name");
+//            return true;
+//        }
         if (TextUtils.isEmpty(eventAddressDialog.getText().toString())) {
             Toast.makeText(getContext(), "Empty field eventAddress", LENGTH_SHORT).show();
             Log.d(TAG, "Empty field eventAddress");
             return true;
         }
-        if (TextUtils.isEmpty(eventDescription.getText().toString())) {
-            Toast.makeText(getContext(), "empty field event description", LENGTH_SHORT).show();
-            Log.d(TAG, "Empty field event description");
-            return true;
-        }
-        if (eventType.getText().toString().length() < 5) {
-            Toast.makeText(getContext(), "empty field type", LENGTH_SHORT).show();
-            Log.d(TAG, "Empty field type");
-            return true;
-        }
+//        if (TextUtils.isEmpty(eventDescription.getText().toString())) {
+//            Toast.makeText(getContext(), "empty field event description", LENGTH_SHORT).show();
+//            Log.d(TAG, "Empty field event description");
+//            return true;
+//        }
+//        if (TextUtils.isEmpty(eventType.getText().toString())) {
+//            Toast.makeText(getContext(), "empty field type", LENGTH_SHORT).show();
+//            Log.d(TAG, "Empty field type");
+//            return true;
+//        }
         return false;
     }
 
@@ -742,6 +863,7 @@ public class UserListFragment extends Fragment implements
     public void onMapReady(GoogleMap map) {
         mGoogleMap = map;
         addUserMapMarkers();
+        addEventMapMarkersFromFB();
         mGoogleMap.setOnPolylineClickListener(this);
         setUpClusterManager(mGoogleMap);
         //addMapMarkersWithTouch(mGoogleMap);
@@ -823,6 +945,7 @@ public class UserListFragment extends Fragment implements
 
             case R.id.btn_reset_map:{
                 addUserMapMarkers();
+                addEventMapMarkersFromFB();
                 break;
             }
         }
@@ -841,7 +964,6 @@ public class UserListFragment extends Fragment implements
                             Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
                             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                             mapIntent.setPackage("com.google.android.apps.maps");
-
                             try{
                                 if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                                     startActivity(mapIntent);
@@ -887,41 +1009,16 @@ public class UserListFragment extends Fragment implements
                             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                 AlertDialog.Builder neutralDialog = new AlertDialog.Builder(getActivity());
                                 neutralDialog.setTitle("Edit description");
-
-                                LayoutInflater inflater = LayoutInflater.from(getActivity()); //Получаем нужный шаблон
-                                View eventDescription = inflater.inflate(R.layout.dialog_edit_description_event, null);
-                                neutralDialog.setView(eventDescription);
-
-                                //текстовые поля внутри шаблона
-                                final MaterialEditText descriptionText = eventDescription.findViewById(R.id.eventDescription);
-
-                                neutralDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                    }
-                                });
-
-                                neutralDialog.setPositiveButton("Add description", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (descriptionText == null){
-                                            Toast.makeText(getActivity().getApplicationContext(),"You have not added a description",Toast.LENGTH_LONG).show();
-                                        }
-                                        else {
-                                            marker.setSnippet(addressList.get(0).getAddressLine(0)+ "\n" + descriptionText.getText().toString());
-                                        }
-                                    }
-                                });
+                                addressParam = addressList.get(0).getAddressLine(0);
+                                addEvent(addressParam);
+                                dialog.cancel();
                                 neutralDialog.show();
                             }
-
                         });
                 final AlertDialog alert = builder.create();
                 alert.show();
             }
         }
-
     }
 
     private void calculateDirections(Marker marker){

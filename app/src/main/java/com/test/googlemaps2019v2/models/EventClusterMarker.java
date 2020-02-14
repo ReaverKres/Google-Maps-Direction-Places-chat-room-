@@ -16,17 +16,26 @@ public class EventClusterMarker implements ClusterItem {
         this.position = position;
     }
 
-    public EventClusterMarker(LatLng position, String title, String snippet, int iconPicture) {
+    public EventClusterMarker(LatLng position, String title, String snippet, int iconPicture, Event event) {
         this.position = position;
         this.title = title;
         this.snippet = snippet;
         this.iconPicture = iconPicture;
+        this.event = event;
     }
 
     public EventClusterMarker(LatLng position, String title, String snippet) {
         this.position = position;
         this.title = title;
         this.snippet = snippet;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public LatLng getPosition() {
