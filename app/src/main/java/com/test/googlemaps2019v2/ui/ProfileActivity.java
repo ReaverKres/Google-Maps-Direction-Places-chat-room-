@@ -1,6 +1,9 @@
 package com.test.googlemaps2019v2.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -10,6 +13,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.UserClient;
 import com.test.googlemaps2019v2.models.User;
@@ -32,6 +36,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
     //vars
     private ImageListFragment mImageListFragment;
+    private BottomNavigationView bottomNavigationView;
 
 
     @Override
@@ -46,6 +51,39 @@ public class ProfileActivity extends AppCompatActivity implements
         findViewById(R.id.text_choose_avatar).setOnClickListener(this);
 
         retrieveProfileImage();
+
+        bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
+        Menu navMenu = bottomNavigationView.getMenu();
+        MenuItem menuItem = navMenu.getItem(2);
+        menuItem.setChecked(true);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener
+                (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.action_sign_out:{
+                                signOut();
+                                return true;
+                            }
+                            case R.id.action_chats:{
+                                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                return true;
+                            }
+                            case R.id.action_profile:{
+
+                                return true;
+                            }
+                            case R.id.action_donate:{
+                                Intent intent = new Intent(ProfileActivity.this, DonateActivity.class);
+                                startActivity(intent);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
     private void retrieveProfileImage(){
@@ -118,6 +156,14 @@ public class ProfileActivity extends AppCompatActivity implements
                 .collection(getString(R.string.collection_users))
                 .document(FirebaseAuth.getInstance().getUid())
                 .set(user);
+    }
+
+    private void signOut(){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
 }

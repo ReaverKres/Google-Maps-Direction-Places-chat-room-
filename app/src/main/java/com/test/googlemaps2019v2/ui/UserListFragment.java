@@ -553,10 +553,12 @@ public class UserListFragment extends Fragment implements
 
                 Log.d(TAG, "addEventMapMarkers: location: " + eventLocation.getGeo_point().toString());
                 try{
-                    String title = "Event by Anonymous";
-//                    if (eventLocation.getUser_id().equals(FirebaseAuth.getInstance().getUid())) {
-//                        title = "Event by " + userLocation.getUser().getUsername();
-//                    }
+                    String title;
+                    if (eventLocation.getEvent().getTitle() == null){
+                        title = "Event by Anonymous";
+                    }else {title = "Event by " + eventLocation.getEvent().getTitle();}
+
+
                     EventClusterMarker newEventClusterMarker = new EventClusterMarker(
                             new LatLng(eventLocation.getGeo_point().getLatitude(), eventLocation.getGeo_point().getLongitude()),
                             title,
@@ -665,12 +667,6 @@ public class UserListFragment extends Fragment implements
                 .collection(getString(R.string.collection_event))
                 .document();
 
-        //eventRef.set(event); // Don't care about listening for completion.
-
-//        EventClient eventClient = new EventClient();
-//        Event event = eventClient.getEvent();
-
-
             androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(getActivity());
             dialog.setTitle("Add event").setMessage("Type event description");
 
@@ -705,6 +701,12 @@ public class UserListFragment extends Fragment implements
                             eventDate.getText().toString(),
                             eventType.getText().toString());
 
+                    for (UserLocation userLocation : mUserLocations) {
+                        if (userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())) {
+                            String title = "Event by " + userLocation.getUser().getUsername();
+                            event.setTitle(title);
+                        }
+                    }
                     if (event.getDescription().isEmpty() && event.getDate().isEmpty()
                     && event.getType().isEmpty())
                     {
@@ -1108,7 +1110,6 @@ public class UserListFragment extends Fragment implements
                         onPolylineClick(polyline);
                         zoomRoute(polyline.getPoints());
                     }
-
                     mSelectedMarker.setVisible(false);
                 }
             }

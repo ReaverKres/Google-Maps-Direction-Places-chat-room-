@@ -2,13 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_profile"
-        android:title="@string/action_profile"
-        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_sign_out"
         android:title="@string/action_sign_out"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_exit_to_app_black_24dp" />
+
+    <item
+        android:id="@+id/action_chats"
+        android:title="@string/action_chats"
+        android:icon="@drawable/ic_chat_black_24dp" />
+
+    <item
+        android:id="@+id/action_profile"
+        android:title="@string/action_profile"
+        android:icon="@drawable/ic_profile_black_24dp" />
+
+    <item
+        android:id="@+id/action_donate"
+        android:title="@string/action_donate"
+        android:icon="@drawable/ic_donate_black_24dp" />
 </menu>

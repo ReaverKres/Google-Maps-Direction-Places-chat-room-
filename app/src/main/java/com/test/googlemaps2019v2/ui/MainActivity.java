@@ -12,12 +12,16 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -87,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean mLocationPermissionGranted = false;     //Разрешение для включения Gps
     private FusedLocationProviderClient mFusedLocationClient;
     private UserLocation mUserLocation;
-    private EventLocation mEventLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mProgressBar = findViewById(R.id.progressBar);
         mChatroomRecyclerView = findViewById(R.id.chatrooms_recycler_view);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
+        Menu navMenu = bottomNavigationView.getMenu();
+        MenuItem menuItem = navMenu.getItem(1);
+        menuItem.setChecked(true);
 
         findViewById(R.id.fab_create_chatroom).setOnClickListener(this);
 
@@ -103,6 +110,35 @@ public class MainActivity extends AppCompatActivity implements
 
         initSupportActionBar();
         initChatroomRecyclerView();
+
+
+        bottomNavigationView.setOnNavigationItemSelectedListener
+                (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.action_sign_out:{
+                                signOut();
+                                return true;
+                            }
+                            case R.id.action_chats:{
+
+                                return true;
+                            }
+                            case R.id.action_profile:{
+                               Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                               startActivity(intent);
+                                return true;
+                            }
+                            case R.id.action_donate:{
+                                Intent intent = new Intent(MainActivity.this, DonateActivity.class);
+                                startActivity(intent);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
 
@@ -464,30 +500,30 @@ public class MainActivity extends AppCompatActivity implements
         finish();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.action_sign_out:{
-                signOut();
-                return true;
-            }
-            case R.id.action_profile:{
-                startActivity(new Intent(this, ProfileActivity.class));
-                return true;
-            }
-            default:{
-                return super.onOptionsItemSelected(item);
-            }
-        }
-
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch(item.getItemId()){
+//            case R.id.action_sign_out:{
+//                signOut();
+//                return true;
+//            }
+//            case R.id.action_profile:{
+//                startActivity(new Intent(this, ProfileActivity.class));
+//                return true;
+//            }
+//            default:{
+//                return super.onOptionsItemSelected(item);
+//            }
+//        }
+//
+//    }
 
     private void showDialog(){
         mProgressBar.setVisibility(View.VISIBLE);

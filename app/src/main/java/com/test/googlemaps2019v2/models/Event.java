@@ -4,19 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Event implements Parcelable {
+    private String title;
     private String eventAddressDialog;
     private String description;
     private String date;
     private String type;
     private String event_id;
 
-    public String getEvent_id() {
-        return event_id;
-    }
 
-    public void setEvent_id(String event_id) {
-        this.event_id = event_id;
-    }
 
     public Event(String eventAddressDialog, String description,
                  String date, String type) {
@@ -30,7 +25,7 @@ public class Event implements Parcelable {
 
     }
 
-    protected Event(Parcel in) {
+    private Event(Parcel in) {
         eventAddressDialog = in.readString();
         description = in.readString();
         date = in.readString();
@@ -48,6 +43,22 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getEvent_id() {
+        return event_id;
+    }
+
+    public void setEvent_id(String event_id) {
+        this.event_id = event_id;
+    }
 
     public String getEventAddressDialog() {
         return eventAddressDialog;
