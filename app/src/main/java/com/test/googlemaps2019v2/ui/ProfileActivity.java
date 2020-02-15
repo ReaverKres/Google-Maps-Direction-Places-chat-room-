@@ -36,15 +36,14 @@ public class ProfileActivity extends AppCompatActivity implements
 
     //vars
     private ImageListFragment mImageListFragment;
-    private BottomNavigationView bottomNavigationView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
         mAvatarImage = findViewById(R.id.image_choose_avatar);
 
         findViewById(R.id.image_choose_avatar).setOnClickListener(this);
@@ -52,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
         retrieveProfileImage();
 
-        bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
         Menu navMenu = bottomNavigationView.getMenu();
         MenuItem menuItem = navMenu.getItem(2);
         menuItem.setChecked(true);

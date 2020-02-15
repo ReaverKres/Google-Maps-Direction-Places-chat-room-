@@ -4,11 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,6 +89,51 @@ public class ChatroomActivity extends AppCompatActivity implements
         getChatroomUsers();
         getChatroomEvents();
         getChatroomEventsLocation();
+
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
+        Menu navMenu = bottomNavigationView.getMenu();
+        MenuItem menuItem = navMenu.getItem(1);
+        menuItem.setTitle(mChatroom.getTitle());
+        menuItem.setChecked(false);
+
+        SpannableString spanString = new SpannableString(menuItem.getTitle().toString());
+        int end = spanString.length();
+        spanString.setSpan(new RelativeSizeSpan(2.0f), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        menuItem.setTitle(spanString);
+
+
+
+        bottomNavigationView.setOnNavigationItemSelectedListener
+                (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()){
+                            case android.R.id.home:{
+                                UserListFragment fragment =
+                                        (UserListFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.fragment_user_list));
+                                if(fragment != null){
+                                    if(fragment.isVisible()){
+                                        getSupportFragmentManager().popBackStack();
+                                        return true;
+                                    }
+                                }
+                                finish();
+                                return true;
+                            }
+                            case R.id.action_chatroom_user_list:{
+                                inflateUserListFragment();
+                                return true;
+                            }
+                            case R.id.action_chatroom_leave:{
+                                leaveChatroom();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+
     }
 
     private void getUserLocation(User user){
@@ -315,7 +366,7 @@ public class ChatroomActivity extends AppCompatActivity implements
     private void getIncomingIntent(){
         if(getIntent().hasExtra(getString(R.string.intent_chatroom))){
             mChatroom = getIntent().getParcelableExtra(getString(R.string.intent_chatroom));
-            setChatroomName();
+//            setChatroomName();
             joinChatroom();
         }
     }
@@ -343,11 +394,11 @@ public class ChatroomActivity extends AppCompatActivity implements
         joinChatroomRef.set(user); // Don't care about listening for completion.
     }
 
-    private void setChatroomName(){
-        getSupportActionBar().setTitle(mChatroom.getTitle());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-    }
+//    private void setChatroomName(){
+//        getSupportActionBar().setTitle(mChatroom.getTitle());
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
+//    }
 
     @Override
     protected void onResume() {

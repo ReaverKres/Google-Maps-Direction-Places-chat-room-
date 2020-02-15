@@ -57,5 +57,6 @@
     <string name="action_profile">Profile</string>
     <string name="action_chats">Chats</string>
     <string name="action_donate">Donate</string>
+    <string name="ERROR">Error</string>
 
 </resources>

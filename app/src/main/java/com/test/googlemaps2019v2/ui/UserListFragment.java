@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -168,6 +169,7 @@ public class UserListFragment extends Fragment implements
                 mEventList.addAll(events);
                 final ArrayList<EventLocation> eventLocations = getArguments().getParcelableArrayList(getString(R.string.intent_event_locations));
                 mEventLocations.addAll(eventLocations);
+
             }
         }
     }
@@ -847,6 +849,9 @@ public class UserListFragment extends Fragment implements
         super.onResume();
         mMapView.onResume();
         startUserLocationsRunnable(); // update user locations every 'LOCATION_UPDATE_INTERVAL'
+        if( getActivity() != null) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @Override
@@ -876,6 +881,9 @@ public class UserListFragment extends Fragment implements
         mMapView.onPause();
         stopLocationUpdates(); // stop updating user locations
         super.onPause();
+        if( getActivity() != null) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @Override
