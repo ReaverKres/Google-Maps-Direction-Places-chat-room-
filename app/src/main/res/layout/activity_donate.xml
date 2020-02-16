@@ -7,18 +7,60 @@
     tools:context=".ui.DonateActivity">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/text5"
+        android:layout_width="381dp"
+        android:layout_height="207dp"
+        android:layout_marginTop="356dp"
+        android:text="@string/EventDesc"
+        android:textSize="15sp"
+        android:textColor="@color/Black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="416dp"
-        android:text="Page for Donates"
+        android:layout_marginTop="312dp"
+        android:layout_marginBottom="13dp"
+        android:text="@string/Event"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/realLayoutBotBar"
+        android:textColor="@color/Black"
+        app:layout_constraintBottom_toTopOf="@+id/text5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.053"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="386dp"
+        android:layout_height="173dp"
+        android:layout_marginTop="104dp"
+        android:text="@string/EventFinderDesc"
+        android:textSize="15sp"
+        android:textColor="@color/Black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.64"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="13dp"
+        android:text="@string/EventFinder"
+        android:textSize="20sp"
+        android:textColor="@color/Black"
+        app:layout_constraintBottom_toTopOf="@+id/text3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.052"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.circularreveal.CircularRevealRelativeLayout
         android:id="@+id/realLayoutBotBar"

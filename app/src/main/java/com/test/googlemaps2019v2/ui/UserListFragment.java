@@ -3,6 +3,7 @@ package com.test.googlemaps2019v2.ui;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -84,6 +86,7 @@ import com.google.maps.model.DirectionsRoute;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -148,6 +151,13 @@ public class UserListFragment extends Fragment implements
     private EventLocation mEventLocation;
     private FirebaseFirestore mDb;
     private DocumentReference eventRef;
+
+    //Date Picker field
+    private DatePickerDialog datePickerDialog;
+    private int year;
+    private int month;
+    private int dayOfMonth;
+    private Calendar calendar;
 
 
     public static UserListFragment newInstance() {
@@ -682,6 +692,26 @@ public class UserListFragment extends Fragment implements
             eventDescription = addEvent.findViewById(R.id.eventDescription);
             eventType = addEvent.findViewById(R.id.type);
             eventAddressDialog.setAdapter(new PlaceAutoSuggestAdapter(getContext(),android.R.layout.simple_list_item_1));
+
+            eventDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    calendar = Calendar.getInstance();
+                    year = calendar.get(Calendar.YEAR);
+                    month = calendar.get(Calendar.MONTH);
+                    dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                    datePickerDialog = new DatePickerDialog(getContext(),
+                            new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    eventDate.setText(year + " : " + (month + 1) + " : " + day );
+                                }
+                            }, year, month, dayOfMonth);
+                    datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                    datePickerDialog.show();
+                }
+            });
+
             if (addressParam != null) {
                 eventAddressDialog.setText(addressParam);
             }

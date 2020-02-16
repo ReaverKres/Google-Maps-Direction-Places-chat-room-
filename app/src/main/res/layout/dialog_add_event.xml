@@ -62,6 +62,7 @@
             android:textColor="@color/colorPrimary"
             android:textColorHint="@color/colorPrimaryDark"
             android:textSize="20sp"
+            android:focusable="false"
 
             app:met_floatingLabel="highlight"
             app:met_baseColor="#0056d3"
