@@ -6,10 +6,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/White">
 
+    <com.google.android.material.circularreveal.CircularRevealRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/realLayoutBotBar"
+        android:layout_alignParentTop="true">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/bottomNavView_Bar"
+            android:background="@drawable/white_grey_border_bottom"
+            app:menu="@menu/chatroom_menu">
+
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+    </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="40dp"
+        android:layout_marginTop="55dp"
         >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -20,29 +39,12 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <com.google.android.material.circularreveal.CircularRevealRelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/realLayoutBotBar"
-            android:layout_alignParentTop="true">
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/bottomNavView_Bar"
-                android:background="@drawable/white_grey_border_bottom"
-                app:menu="@menu/chatroom_menu">
-
-            </com.google.android.material.bottomnavigation.BottomNavigationView>
-
-        </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
-
     </RelativeLayout>
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/grey_border_top">
 

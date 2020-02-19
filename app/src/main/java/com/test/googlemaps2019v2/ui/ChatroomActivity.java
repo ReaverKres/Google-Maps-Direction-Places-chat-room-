@@ -366,7 +366,6 @@ public class ChatroomActivity extends AppCompatActivity implements
     private void getIncomingIntent(){
         if(getIntent().hasExtra(getString(R.string.intent_chatroom))){
             mChatroom = getIntent().getParcelableExtra(getString(R.string.intent_chatroom));
-//            setChatroomName();
             joinChatroom();
         }
     }
@@ -380,6 +379,8 @@ public class ChatroomActivity extends AppCompatActivity implements
                 .document(FirebaseAuth.getInstance().getUid());
 
         joinChatroomRef.delete();
+        Intent intent = new Intent(ChatroomActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void joinChatroom(){
@@ -393,12 +394,6 @@ public class ChatroomActivity extends AppCompatActivity implements
         User user = ((UserClient)(getApplicationContext())).getUser();
         joinChatroomRef.set(user); // Don't care about listening for completion.
     }
-
-//    private void setChatroomName(){
-//        getSupportActionBar().setTitle(mChatroom.getTitle());
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
-//    }
 
     @Override
     protected void onResume() {

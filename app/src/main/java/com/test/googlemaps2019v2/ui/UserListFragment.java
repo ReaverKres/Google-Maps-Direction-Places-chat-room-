@@ -935,14 +935,14 @@ public class UserListFragment extends Fragment implements
                 "weight",
                 50,
                 100);
-        mapAnimation.setDuration(800);
+        mapAnimation.setDuration(0);
 
         ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(mUserListRecyclerView);
         ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
                 "weight",
                 50,
                 0);
-        recyclerAnimation.setDuration(800);
+        recyclerAnimation.setDuration(0);
 
         recyclerAnimation.start();
         mapAnimation.start();
@@ -954,14 +954,14 @@ public class UserListFragment extends Fragment implements
                 "weight",
                 100,
                 50);
-        mapAnimation.setDuration(800);
+        mapAnimation.setDuration(0);//800
 
         ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(mUserListRecyclerView);
         ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
                 "weight",
                 0,
                 50);
-        recyclerAnimation.setDuration(800);
+        recyclerAnimation.setDuration(0);
 
         recyclerAnimation.start();
         mapAnimation.start();

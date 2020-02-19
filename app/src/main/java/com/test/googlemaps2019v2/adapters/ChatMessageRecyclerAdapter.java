@@ -41,7 +41,6 @@ public class ChatMessageRecyclerAdapter extends RecyclerView.Adapter<ChatMessage
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-
         if(FirebaseAuth.getInstance().getUid().equals(mMessages.get(position).getUser().getUser_id())){
             ((ViewHolder)holder).username.setTextColor(ContextCompat.getColor(mContext, R.color.green1));
         }
@@ -52,8 +51,6 @@ public class ChatMessageRecyclerAdapter extends RecyclerView.Adapter<ChatMessage
         ((ViewHolder)holder).username.setText(mMessages.get(position).getUser().getUsername());
         ((ViewHolder)holder).message.setText(mMessages.get(position).getMessage());
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -70,8 +67,6 @@ public class ChatMessageRecyclerAdapter extends RecyclerView.Adapter<ChatMessage
             username = itemView.findViewById(R.id.chat_message_username);
         }
     }
-
-
 }
 
 

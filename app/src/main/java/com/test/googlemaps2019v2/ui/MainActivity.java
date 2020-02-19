@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -31,13 +32,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.test.googlemaps2019v2.EventClient;
+
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.UserClient;
 import com.test.googlemaps2019v2.adapters.ChatroomRecyclerAdapter;
 import com.test.googlemaps2019v2.models.Chatroom;
-import com.test.googlemaps2019v2.models.Event;
-import com.test.googlemaps2019v2.models.EventLocation;
 import com.test.googlemaps2019v2.models.User;
 import com.test.googlemaps2019v2.models.UserLocation;
 import com.test.googlemaps2019v2.services.LocationService;
@@ -62,6 +61,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements
         mDb = FirebaseFirestore.getInstance();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        initSupportActionBar();
         initChatroomRecyclerView();
 
 
@@ -338,12 +337,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
-
     }
 
-    private void initSupportActionBar(){
-        setTitle("Chats");
-    }
 
     @Override
     public void onClick(View view) {
@@ -357,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initChatroomRecyclerView(){
         mChatroomRecyclerAdapter = new ChatroomRecyclerAdapter(mChatrooms, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mChatroomRecyclerView);
         mChatroomRecyclerView.setAdapter(mChatroomRecyclerAdapter);
         mChatroomRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -534,4 +530,34 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback
+            = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            for (Chatroom mChatroom : mChatrooms) {
+                if (mChatroom.getChatroom_id().equals
+                        (mChatrooms.get(viewHolder.getAdapterPosition()).getChatroom_id())){
+
+                    deleteChatroom(mChatroom);
+                }
+            }
+            mChatrooms.remove(viewHolder.getAdapterPosition());
+            mChatroomRecyclerAdapter.notifyDataSetChanged();
+
+
+        }
+    };
+
+    private void deleteChatroom(Chatroom mChatroom) {
+        DocumentReference deleteChatroomRef = mDb
+                .collection(getString(R.string.collection_chatrooms))
+                .document(mChatroom.getChatroom_id());
+
+        deleteChatroomRef.delete();
+    }
 }
