@@ -47,7 +47,6 @@ public class UserClusterManagerRenderer extends DefaultClusterRenderer<UserClust
         iconGenerator.setContentView(imageView);
         layoutInflater = LayoutInflater.from(context);
         clusterItemView = layoutInflater.inflate(R.layout.single_cluster_marker_view, null);
-
     }
 
     /**

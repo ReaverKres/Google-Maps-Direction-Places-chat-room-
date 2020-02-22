@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.firebase.firestore.GeoPoint;
 import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -99,6 +100,7 @@ public class UserListFragment extends Fragment implements
         View.OnClickListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnPolylineClickListener,
+        GoogleMap.OnCameraMoveListener,
         UserRecyclerAdapter.UserListRecyclerClickListener
 {
 
@@ -530,11 +532,9 @@ public class UserListFragment extends Fragment implements
                     );
                     userClusterManager.addItem(newUserClusterMarker);
                     mUserClusterMarkers.add(newUserClusterMarker);
-
                 }catch (NullPointerException e){
                     Log.e(TAG, "addUserMapMarkers: NullPointerException: " + e.getMessage() );
                 }
-
             }
             userClusterManager.cluster();
 
@@ -568,8 +568,7 @@ public class UserListFragment extends Fragment implements
                     String title;
                     if (eventLocation.getEvent().getTitle() == null){
                         title = "Event by Anonymous";
-                    }else {title = "Event by " + eventLocation.getEvent().getTitle();}
-
+                    }else {title = eventLocation.getEvent().getTitle();}
 
                     EventClusterMarker newEventClusterMarker = new EventClusterMarker(
                             new LatLng(eventLocation.getGeo_point().getLatitude(), eventLocation.getGeo_point().getLongitude()),
@@ -903,6 +902,7 @@ public class UserListFragment extends Fragment implements
         addEventMapMarkersFromFB();
         mGoogleMap.setOnPolylineClickListener(this);
         setUpClusterManager(mGoogleMap);
+        mGoogleMap.setOnCameraMoveListener(this);
         //addMapMarkersWithTouch(mGoogleMap);
     }
 
@@ -935,14 +935,14 @@ public class UserListFragment extends Fragment implements
                 "weight",
                 50,
                 100);
-        mapAnimation.setDuration(0);
+        mapAnimation.setDuration(0);//800
 
         ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(mUserListRecyclerView);
         ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
                 "weight",
                 50,
                 0);
-        recyclerAnimation.setDuration(0);
+        recyclerAnimation.setDuration(0);//800
 
         recyclerAnimation.start();
         mapAnimation.start();
@@ -961,7 +961,7 @@ public class UserListFragment extends Fragment implements
                 "weight",
                 0,
                 50);
-        recyclerAnimation.setDuration(0);
+        recyclerAnimation.setDuration(0);//800
 
         recyclerAnimation.start();
         mapAnimation.start();
@@ -1220,6 +1220,19 @@ public class UserListFragment extends Fragment implements
                 );
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onCameraMove() {
+        {
+            CameraPosition cameraPosition = mGoogleMap.getCameraPosition();
+            if(cameraPosition.zoom > 18.0) {
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            } else {
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            }
+            Log.d(TAG, "onCameraMove: " + cameraPosition.zoom);
         }
     }
 }

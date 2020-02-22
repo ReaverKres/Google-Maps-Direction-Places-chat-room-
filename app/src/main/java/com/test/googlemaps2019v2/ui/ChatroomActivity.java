@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,10 +23,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.UserClient;
 import com.test.googlemaps2019v2.adapters.ChatMessageRecyclerAdapter;
+import com.test.googlemaps2019v2.adapters.ImageListRecyclerAdapter;
 import com.test.googlemaps2019v2.models.ChatMessage;
 import com.test.googlemaps2019v2.models.Chatroom;
 import com.test.googlemaps2019v2.models.Event;
@@ -49,6 +53,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+
+
 public class ChatroomActivity extends AppCompatActivity implements
         View.OnClickListener
 {
@@ -58,6 +64,8 @@ public class ChatroomActivity extends AppCompatActivity implements
     //widgets
     private Chatroom mChatroom;
     private EditText mMessage;
+    private ImageView mAvatarImage;
+
 
     //vars
     private ListenerRegistration mChatMessageEventListener, mEventListListener;
@@ -70,6 +78,7 @@ public class ChatroomActivity extends AppCompatActivity implements
     private ArrayList<Event> mEventList = new ArrayList<>();
     private ArrayList<UserLocation> mUserLocations = new ArrayList<>();
     private ArrayList<EventLocation> mEventLocations = new ArrayList<>();
+    private ArrayList<Integer> mImageResources = new ArrayList<>();
 
 
 
@@ -80,6 +89,7 @@ public class ChatroomActivity extends AppCompatActivity implements
         mMessage = findViewById(R.id.input_message);
         mChatMessageRecyclerView = findViewById(R.id.chatmessage_recycler_view);
 
+
         findViewById(R.id.checkmark).setOnClickListener(this);
 
         mDb = FirebaseFirestore.getInstance();
@@ -89,6 +99,7 @@ public class ChatroomActivity extends AppCompatActivity implements
         getChatroomUsers();
         getChatroomEvents();
         getChatroomEventsLocation();
+        getImageResouces();
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
@@ -101,7 +112,6 @@ public class ChatroomActivity extends AppCompatActivity implements
         int end = spanString.length();
         spanString.setSpan(new RelativeSizeSpan(2.0f), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         menuItem.setTitle(spanString);
-
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener
@@ -276,7 +286,8 @@ public class ChatroomActivity extends AppCompatActivity implements
     }
 
     private void initChatroomRecyclerView(){
-        mChatMessageRecyclerAdapter = new ChatMessageRecyclerAdapter(mMessages, new ArrayList<User>(), this);
+
+        mChatMessageRecyclerAdapter = new ChatMessageRecyclerAdapter(mMessages, new ArrayList<User>(),this);
         mChatMessageRecyclerView.setAdapter(mChatMessageRecyclerAdapter);
         mChatMessageRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -454,5 +465,16 @@ public class ChatroomActivity extends AppCompatActivity implements
                 insertNewMessage();
             }
         }
+    }
+
+    private void getImageResouces(){
+        mImageResources.add(R.drawable.cwm_logo);
+        mImageResources.add(R.drawable.cartman_cop);
+        mImageResources.add(R.drawable.eric_cartman);
+        mImageResources.add(R.drawable.ike);
+        mImageResources.add(R.drawable.kyle);
+        mImageResources.add(R.drawable.satan);
+        mImageResources.add(R.drawable.chef);
+        mImageResources.add(R.drawable.tweek);
     }
 }

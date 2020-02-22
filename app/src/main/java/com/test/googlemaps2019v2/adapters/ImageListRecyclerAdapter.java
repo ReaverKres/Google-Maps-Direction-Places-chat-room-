@@ -3,6 +3,8 @@ package com.test.googlemaps2019v2.adapters;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,10 @@ import java.util.ArrayList;
 
 public class ImageListRecyclerAdapter extends RecyclerView.Adapter<ImageListRecyclerAdapter.ViewHolder>{
 
-    private ArrayList<Integer> mImages = new ArrayList<>();
+    private ArrayList<Integer> mImages;
     private ImageListRecyclerClickListener mImageListRecyclerClickListener;
     private Context mContext;
+    private static final String TAG = "ImageList";
 
     public ImageListRecyclerAdapter(Context context, ArrayList<Integer> images, ImageListRecyclerClickListener imageListRecyclerClickListener) {
         mContext = context;
@@ -45,7 +48,8 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<ImageListRecy
         Glide.with(mContext)
                 .setDefaultRequestOptions(requestOptions)
                 .load(mImages.get(position))
-                .into(((ViewHolder)holder).image);
+                .into((holder).image);
+        Log.d(TAG, "onBindViewHolder: " + mImages.get(position).toString());
     }
 
     @Override

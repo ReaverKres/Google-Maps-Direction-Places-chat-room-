@@ -15,18 +15,17 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.models.EventClusterMarker;
-import com.test.googlemaps2019v2.models.UserClusterMarker;
 
 
 public class EventClusterManagerRenderer extends DefaultClusterRenderer<EventClusterMarker> {
-    private static final int MARKER_DIMENSION = 100;  // 2
+    private int markerDimension = 100;  // 2
     private final IconGenerator iconGenerator;
     private final ImageView markerImageView;
     public EventClusterManagerRenderer(Context context, GoogleMap map, ClusterManager<EventClusterMarker> clusterManager) {
         super(context, map, clusterManager);
         iconGenerator = new IconGenerator(context);  // 3
         markerImageView = new ImageView(context);
-        markerImageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_DIMENSION, MARKER_DIMENSION));
+        markerImageView.setLayoutParams(new ViewGroup.LayoutParams(markerDimension, markerDimension));
         iconGenerator.setContentView(markerImageView);  // 4
     }
     @Override
@@ -47,6 +46,14 @@ public class EventClusterManagerRenderer extends DefaultClusterRenderer<EventClu
         if (marker != null) {
             marker.setPosition(eventClusterMarker.getPosition());
         }
+    }
+
+    public int getMarkerDimension() {
+        return markerDimension;
+    }
+
+    public void setMarkerDimension(int markerDimension) {
+        this.markerDimension = markerDimension;
     }
 }
 

@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="10dp"
-    android:paddingTop="20dp"
+    android:paddingLeft="12dp"
     android:paddingBottom="20dp">
 
     <TextView
@@ -13,7 +12,6 @@
         android:id="@+id/chatroom_title"
         android:textColor="#000"
         android:text="Chatroom name"
-        android:textSize="17sp"
-        />
+        android:textSize="17sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

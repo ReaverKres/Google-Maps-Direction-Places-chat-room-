@@ -11,6 +11,23 @@
     android:layout_height="match_parent"
     android:id="@+id/relLayout">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/realLayoutTopBar"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/collection_chatrooms"
+            android:textSize="18sp"
+            android:textColor="@color/Black"/>
+
+    </RelativeLayout>
+
     <com.google.android.material.circularreveal.CircularRevealRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -23,8 +40,8 @@
             android:id="@+id/bottomNavView_Bar"
             android:background="@drawable/white_grey_border_bottom"
             app:menu="@menu/menu_main">
-
         </com.google.android.material.bottomnavigation.BottomNavigationView>
+
 
     </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
 
@@ -32,7 +49,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/realLayoutMiddle"
-        android:layout_above="@+id/realLayoutBotBar">
+        android:layout_above="@+id/realLayoutBotBar"
+        android:layout_below="@+id/realLayoutTopBar">
 
         <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"

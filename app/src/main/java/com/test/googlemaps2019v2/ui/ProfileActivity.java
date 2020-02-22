@@ -38,12 +38,11 @@ public class ProfileActivity extends AppCompatActivity implements
     private ImageListFragment mImageListFragment;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
         mAvatarImage = findViewById(R.id.image_choose_avatar);
 
         findViewById(R.id.image_choose_avatar).setOnClickListener(this);
@@ -164,5 +163,4 @@ public class ProfileActivity extends AppCompatActivity implements
         startActivity(intent);
         finish();
     }
-
 }

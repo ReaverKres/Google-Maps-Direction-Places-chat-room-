@@ -17,10 +17,8 @@ import com.test.googlemaps2019v2.R;
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;
-    private Context mContext;
 
     public CustomInfoWindowAdapter(Context context) {
-        mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
     }
 
