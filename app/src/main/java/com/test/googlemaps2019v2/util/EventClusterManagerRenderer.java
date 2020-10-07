@@ -14,7 +14,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.models.EventClusterMarker;
+import com.test.googlemaps2019v2.models.event.EventClusterMarker;
 
 
 public class EventClusterManagerRenderer extends DefaultClusterRenderer<EventClusterMarker> {

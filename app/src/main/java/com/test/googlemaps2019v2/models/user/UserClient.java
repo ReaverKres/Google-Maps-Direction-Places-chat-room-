@@ -1,8 +1,6 @@
-package com.test.googlemaps2019v2;
+package com.test.googlemaps2019v2.models.user;
 
 import android.app.Application;
-
-import com.test.googlemaps2019v2.models.User;
 
 
 public class UserClient extends Application {

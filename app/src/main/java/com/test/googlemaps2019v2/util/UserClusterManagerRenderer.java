@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.models.UserClusterMarker;
+import com.test.googlemaps2019v2.models.user.UserClusterMarker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;

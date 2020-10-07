@@ -1,11 +1,11 @@
-package com.test.googlemaps2019v2.adapters;
+package com.test.googlemaps2019v2.ui.adapters;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
-import com.test.googlemaps2019v2.models.PlaceApi;
+import com.test.googlemaps2019v2.models.map.PlaceApi;
 
 import java.util.ArrayList;
 

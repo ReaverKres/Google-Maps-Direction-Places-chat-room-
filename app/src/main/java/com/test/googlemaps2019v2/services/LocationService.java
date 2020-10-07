@@ -21,9 +21,9 @@ import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.UserClient;
-import com.test.googlemaps2019v2.models.User;
-import com.test.googlemaps2019v2.models.UserLocation;
+import com.test.googlemaps2019v2.models.user.UserClient;
+import com.test.googlemaps2019v2.models.user.User;
+import com.test.googlemaps2019v2.models.user.UserLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

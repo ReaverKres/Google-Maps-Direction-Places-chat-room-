@@ -1,12 +1,10 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,15 +24,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.UserClient;
-import com.test.googlemaps2019v2.adapters.ChatMessageRecyclerAdapter;
-import com.test.googlemaps2019v2.adapters.ImageListRecyclerAdapter;
-import com.test.googlemaps2019v2.models.ChatMessage;
-import com.test.googlemaps2019v2.models.Chatroom;
-import com.test.googlemaps2019v2.models.Event;
-import com.test.googlemaps2019v2.models.EventLocation;
-import com.test.googlemaps2019v2.models.User;
-import com.test.googlemaps2019v2.models.UserLocation;
+import com.test.googlemaps2019v2.models.user.UserClient;
+import com.test.googlemaps2019v2.ui.fragment.UserListFragment;
+import com.test.googlemaps2019v2.ui.adapters.ChatMessageRecyclerAdapter;
+import com.test.googlemaps2019v2.models.chat.ChatMessage;
+import com.test.googlemaps2019v2.models.chat.Chatroom;
+import com.test.googlemaps2019v2.models.event.Event;
+import com.test.googlemaps2019v2.models.event.EventLocation;
+import com.test.googlemaps2019v2.models.user.User;
+import com.test.googlemaps2019v2.models.user.UserLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

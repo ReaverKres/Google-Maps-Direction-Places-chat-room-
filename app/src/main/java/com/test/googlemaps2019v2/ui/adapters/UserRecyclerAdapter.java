@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.adapters;
+package com.test.googlemaps2019v2.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.models.User;
+import com.test.googlemaps2019v2.models.user.User;
 
 import java.util.ArrayList;
 

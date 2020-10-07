@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.models;
+package com.test.googlemaps2019v2.models.map;
 
 
 import org.json.JSONArray;

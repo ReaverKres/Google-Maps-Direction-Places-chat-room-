@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.fragment;
 
 
 import android.content.Context;
@@ -13,16 +13,17 @@ import android.view.ViewGroup;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.adapters.ImageListRecyclerAdapter;
+import com.test.googlemaps2019v2.IProfile;
+import com.test.googlemaps2019v2.ui.adapters.ImageListRecyclerAdapter;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ImageListFragment#newInstance} factory method to
+ * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ImageListFragment extends Fragment implements ImageListRecyclerAdapter.ImageListRecyclerClickListener{
+public class MapFragment extends Fragment implements ImageListRecyclerAdapter.ImageListRecyclerClickListener{
 
     private static final String TAG = "ImageListFragment";
     private static final int NUM_COLUMNS = 2;
@@ -35,13 +36,13 @@ public class ImageListFragment extends Fragment implements ImageListRecyclerAdap
     private ArrayList<Integer> mImageResources = new ArrayList<>();
     private IProfile mIProfile;
 
-    public ImageListFragment() {
+    public MapFragment() {
         // Required empty public constructor
     }
 
 
-    public static ImageListFragment newInstance() {
-        return new ImageListFragment();
+    public static MapFragment newInstance() {
+        return new MapFragment();
     }
 
     @Override

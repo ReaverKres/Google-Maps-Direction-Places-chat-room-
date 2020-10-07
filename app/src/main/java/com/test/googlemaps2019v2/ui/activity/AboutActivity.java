@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.test.googlemaps2019v2.R;
 
-public class DonateActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
 
@@ -35,12 +35,12 @@ public class DonateActivity extends AppCompatActivity {
                                 return true;
                             }
                             case R.id.action_chats:{
-                                Intent intent = new Intent(DonateActivity.this, MainActivity.class);
+                                Intent intent = new Intent(AboutActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 return true;
                             }
                             case R.id.action_profile:{
-                                Intent intent = new Intent(DonateActivity.this, ProfileActivity.class);
+                                Intent intent = new Intent(AboutActivity.this, ProfileActivity.class);
                                 startActivity(intent);
                                 return true;
                             }

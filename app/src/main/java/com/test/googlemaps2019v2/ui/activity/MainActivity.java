@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.activity;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import android.text.InputType;
 import android.util.Log;
@@ -34,11 +33,11 @@ import android.widget.Toast;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.UserClient;
-import com.test.googlemaps2019v2.adapters.ChatroomRecyclerAdapter;
-import com.test.googlemaps2019v2.models.Chatroom;
-import com.test.googlemaps2019v2.models.User;
-import com.test.googlemaps2019v2.models.UserLocation;
+import com.test.googlemaps2019v2.models.user.UserClient;
+import com.test.googlemaps2019v2.ui.adapters.ChatroomRecyclerAdapter;
+import com.test.googlemaps2019v2.models.chat.Chatroom;
+import com.test.googlemaps2019v2.models.user.User;
+import com.test.googlemaps2019v2.models.user.UserLocation;
 import com.test.googlemaps2019v2.services.LocationService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -61,7 +60,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements
                                 return true;
                             }
                             case R.id.action_donate:{
-                                Intent intent = new Intent(MainActivity.this, DonateActivity.class);
+                                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(intent);
                                 return true;
                             }

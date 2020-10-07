@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.models;
+package com.test.googlemaps2019v2.models.event;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 

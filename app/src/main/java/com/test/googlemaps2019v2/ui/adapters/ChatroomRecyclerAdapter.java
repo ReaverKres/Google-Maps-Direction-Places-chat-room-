@@ -1,7 +1,6 @@
-package com.test.googlemaps2019v2.adapters;
+package com.test.googlemaps2019v2.ui.adapters;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.TextView;
 
 
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.models.Chatroom;
+import com.test.googlemaps2019v2.models.chat.Chatroom;
 
 import java.util.ArrayList;
 

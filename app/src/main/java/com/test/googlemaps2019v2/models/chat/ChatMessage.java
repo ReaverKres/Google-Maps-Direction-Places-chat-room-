@@ -1,6 +1,7 @@
-package com.test.googlemaps2019v2.models;
+package com.test.googlemaps2019v2.models.chat;
 
 import com.google.firebase.firestore.ServerTimestamp;
+import com.test.googlemaps2019v2.models.user.User;
 
 import java.util.Date;
 

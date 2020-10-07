@@ -1,10 +1,11 @@
-package com.test.googlemaps2019v2.models;
+package com.test.googlemaps2019v2.models.event;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.test.googlemaps2019v2.models.user.User;
 
 import java.util.Date;
 

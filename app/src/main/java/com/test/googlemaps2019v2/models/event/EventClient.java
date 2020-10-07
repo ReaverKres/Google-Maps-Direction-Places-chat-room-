@@ -1,11 +1,9 @@
-package com.test.googlemaps2019v2;
+package com.test.googlemaps2019v2.models.event;
 
 import android.app.Application;
-import com.test.googlemaps2019v2.models.Event;
 
 
-
-    public class EventClient extends Application {
+public class EventClient extends Application {
 
         private Event event = null;
 

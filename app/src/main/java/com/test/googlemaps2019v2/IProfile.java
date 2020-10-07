@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2;
 
 public interface IProfile {
 

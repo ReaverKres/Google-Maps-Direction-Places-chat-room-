@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.fragment;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
@@ -48,16 +48,16 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.test.googlemaps2019v2.R;
 
 
-import com.test.googlemaps2019v2.adapters.CustomInfoWindowAdapter;
-import com.test.googlemaps2019v2.adapters.PlaceAutoSuggestAdapter;
-import com.test.googlemaps2019v2.adapters.UserRecyclerAdapter;
-import com.test.googlemaps2019v2.models.Event;
-import com.test.googlemaps2019v2.models.EventClusterMarker;
-import com.test.googlemaps2019v2.models.EventLocation;
-import com.test.googlemaps2019v2.models.UserClusterMarker;
-import com.test.googlemaps2019v2.models.PolylineData;
-import com.test.googlemaps2019v2.models.User;
-import com.test.googlemaps2019v2.models.UserLocation;
+import com.test.googlemaps2019v2.ui.adapters.CustomInfoWindowAdapter;
+import com.test.googlemaps2019v2.ui.adapters.PlaceAutoSuggestAdapter;
+import com.test.googlemaps2019v2.ui.adapters.UserRecyclerAdapter;
+import com.test.googlemaps2019v2.models.event.Event;
+import com.test.googlemaps2019v2.models.event.EventClusterMarker;
+import com.test.googlemaps2019v2.models.event.EventLocation;
+import com.test.googlemaps2019v2.models.user.UserClusterMarker;
+import com.test.googlemaps2019v2.models.map.PolylineData;
+import com.test.googlemaps2019v2.models.user.User;
+import com.test.googlemaps2019v2.models.user.UserLocation;
 import com.test.googlemaps2019v2.util.EventClusterManagerRenderer;
 import com.test.googlemaps2019v2.util.UserClusterManagerRenderer;
 import com.test.googlemaps2019v2.util.ViewWeightAnimationWrapper;

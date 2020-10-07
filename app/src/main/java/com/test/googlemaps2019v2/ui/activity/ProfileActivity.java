@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.ui;
+package com.test.googlemaps2019v2.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,10 +15,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.UserClient;
-import com.test.googlemaps2019v2.models.User;
+import com.test.googlemaps2019v2.models.user.UserClient;
+import com.test.googlemaps2019v2.models.user.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.test.googlemaps2019v2.IProfile;
+import com.test.googlemaps2019v2.ui.fragment.MapFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity implements
     private CircleImageView mAvatarImage;
 
     //vars
-    private ImageListFragment mImageListFragment;
+    private MapFragment mMapFragment;
 
 
 
@@ -74,7 +76,7 @@ public class ProfileActivity extends AppCompatActivity implements
                                 return true;
                             }
                             case R.id.action_donate:{
-                                Intent intent = new Intent(ProfileActivity.this, DonateActivity.class);
+                                Intent intent = new Intent(ProfileActivity.this, AboutActivity.class);
                                 startActivity(intent);
                                 return true;
                             }
@@ -104,10 +106,10 @@ public class ProfileActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        mImageListFragment = new ImageListFragment();
+        mMapFragment = new MapFragment();
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up)
-                .replace(R.id.fragment_container, mImageListFragment, getString(R.string.fragment_image_list))
+                .replace(R.id.fragment_container, mMapFragment, getString(R.string.fragment_image_list))
                 .commit();
     }
 
@@ -133,7 +135,7 @@ public class ProfileActivity extends AppCompatActivity implements
         // remove the image selector fragment
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up)
-                .remove(mImageListFragment)
+                .remove(mMapFragment)
                 .commit();
 
         // display the image

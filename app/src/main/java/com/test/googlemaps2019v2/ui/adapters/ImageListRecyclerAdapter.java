@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.adapters;
+package com.test.googlemaps2019v2.ui.adapters;
 
 import android.content.Context;
 import androidx.annotation.NonNull;

@@ -1,4 +1,4 @@
-package com.test.googlemaps2019v2.adapters;
+package com.test.googlemaps2019v2.ui.adapters;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -15,11 +15,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.test.googlemaps2019v2.R;
-import com.test.googlemaps2019v2.UserClient;
-import com.test.googlemaps2019v2.models.ChatMessage;
-import com.test.googlemaps2019v2.models.User;
+import com.test.googlemaps2019v2.models.chat.ChatMessage;
+import com.test.googlemaps2019v2.models.user.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.test.googlemaps2019v2.ui.ChatroomActivity;
 
 import java.util.ArrayList;
 
