@@ -20,7 +20,7 @@ import com.test.googlemaps2019v2.models.user.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.test.googlemaps2019v2.IProfile;
-import com.test.googlemaps2019v2.ui.fragment.MapFragment;
+import com.test.googlemaps2019v2.ui.fragment.UserListFragmentKt;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity implements
     private CircleImageView mAvatarImage;
 
     //vars
-    private MapFragment mMapFragment;
+    private UserListFragmentKt mUserListFragmentKt;
 
 
 
@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
                                 return true;
                             }
-                            case R.id.action_donate:{
+                            case R.id.action_about:{
                                 Intent intent = new Intent(ProfileActivity.this, AboutActivity.class);
                                 startActivity(intent);
                                 return true;
@@ -106,10 +106,10 @@ public class ProfileActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        mMapFragment = new MapFragment();
+        mUserListFragmentKt = new UserListFragmentKt();
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up)
-                .replace(R.id.fragment_container, mMapFragment, getString(R.string.fragment_image_list))
+                .replace(R.id.fragment_container, mUserListFragmentKt, getString(R.string.fragment_image_list))
                 .commit();
     }
 
@@ -135,7 +135,7 @@ public class ProfileActivity extends AppCompatActivity implements
         // remove the image selector fragment
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up)
-                .remove(mMapFragment)
+                .remove(mUserListFragmentKt)
                 .commit();
 
         // display the image

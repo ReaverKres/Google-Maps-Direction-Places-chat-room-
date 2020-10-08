@@ -23,4 +23,7 @@
     <color name="DarkGrey">#737373 </color>
     <color name="Black">#000 </color>
 
+    <color name="blackGrayColorDayNight">#DD000000</color>
+    <color name="grayIconColor">#8E8E8E</color>
+
 </resources>

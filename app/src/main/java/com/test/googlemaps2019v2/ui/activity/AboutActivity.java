@@ -19,7 +19,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_donate);
+        setContentView(R.layout.activity_about);
         bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
         Menu navMenu = bottomNavigationView.getMenu();
         MenuItem menuItem = navMenu.getItem(3);
@@ -44,7 +44,7 @@ public class AboutActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 return true;
                             }
-                            case R.id.action_donate:{
+                            case R.id.action_about:{
 
                                 return true;
                             }

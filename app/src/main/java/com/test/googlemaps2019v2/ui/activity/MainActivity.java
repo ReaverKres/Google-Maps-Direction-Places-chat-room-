@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_chatroom_list);
         mProgressBar = findViewById(R.id.progressBar);
         mChatroomRecyclerView = findViewById(R.id.chatrooms_recycler_view);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView_Bar);
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
                                startActivity(intent);
                                 return true;
                             }
-                            case R.id.action_donate:{
+                            case R.id.action_about:{
                                 Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(intent);
                                 return true;

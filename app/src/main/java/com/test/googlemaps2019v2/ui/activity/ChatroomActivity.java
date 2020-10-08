@@ -25,7 +25,7 @@ import android.widget.ImageView;
 
 import com.test.googlemaps2019v2.R;
 import com.test.googlemaps2019v2.models.user.UserClient;
-import com.test.googlemaps2019v2.ui.fragment.UserListFragment;
+import com.test.googlemaps2019v2.ui.fragment.MapFragment;
 import com.test.googlemaps2019v2.ui.adapters.ChatMessageRecyclerAdapter;
 import com.test.googlemaps2019v2.models.chat.ChatMessage;
 import com.test.googlemaps2019v2.models.chat.Chatroom;
@@ -118,8 +118,8 @@ public class ChatroomActivity extends AppCompatActivity implements
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()){
                             case android.R.id.home:{
-                                UserListFragment fragment =
-                                        (UserListFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.fragment_user_list));
+                                MapFragment fragment =
+                                        (MapFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.fragment_user_list));
                                 if(fragment != null){
                                     if(fragment.isVisible()){
                                         getSupportFragmentManager().popBackStack();
@@ -351,7 +351,7 @@ public class ChatroomActivity extends AppCompatActivity implements
     private void inflateUserListFragment(){
 		hideSoftKeyboard();
 		
-        UserListFragment fragment = UserListFragment.newInstance();
+        MapFragment fragment = MapFragment.newInstance();
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(getString(R.string.intent_user_list), mUserList);
         bundle.putParcelableArrayList(getString(R.string.intent_user_locations), mUserLocations);
@@ -431,8 +431,8 @@ public class ChatroomActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case android.R.id.home:{
-                UserListFragment fragment =
-                        (UserListFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.fragment_user_list));
+                MapFragment fragment =
+                        (MapFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.fragment_user_list));
                 if(fragment != null){
                     if(fragment.isVisible()){
                         getSupportFragmentManager().popBackStack();

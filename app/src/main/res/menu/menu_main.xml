@@ -19,7 +19,7 @@
         android:icon="@drawable/ic_profile_black_24dp" />
 
     <item
-        android:id="@+id/action_donate"
+        android:id="@+id/action_about"
         android:title="@string/action_donate"
         android:icon="@drawable/ic_info_black_24dp" />
 </menu>

@@ -30,7 +30,7 @@
 
 
                 <EditText
-                    android:id="@+id/input_email"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -40,22 +40,22 @@
 
 
                 <EditText
-                    android:id="@+id/input_password"
+                    android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:inputType="textPassword"
                     android:hint="@string/password"
-                    android:layout_below="@+id/input_email"/>
+                    android:layout_below="@+id/email"/>
 
                 <EditText
-                    android:id="@+id/input_confirm_password"
+                    android:id="@+id/confirm_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:inputType="textPassword"
                     android:hint="@string/confirm_password"
-                    android:layout_below="@+id/input_password"/>
+                    android:layout_below="@+id/password"/>
 
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
-                    android:layout_below="@+id/input_confirm_password"
+                    android:layout_below="@+id/confirm_password"
                     android:text="@string/register"
                     android:background="@drawable/theme_button"/>
 

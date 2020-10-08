@@ -17,24 +17,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.AboutActivity"
-                  android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.activity.MainActivity"
-                  android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.activity.LoginActivity"
-                  android:screenOrientation="portrait">
+        <activity android:name=".ui.activityKt.ChatroomActivityKt"></activity>
+        <activity android:name=".ui.activityKt.RegisterActivity" />
+        <activity android:name=".ui.activityKt.LoginActivityKt" />
+        <activity android:name=".ui.activityKt.ProfileActivityKt" />
+        <activity android:name=".ui.activityKt.AboutActivityKt" />
+        <activity android:name=".ui.activityKt.MainActivityKt" />
+        <activity
+            android:name=".ui.activity.AboutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.RegisterActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.ChatroomActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.ProfileActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activity.RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.ChatroomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.ProfileActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

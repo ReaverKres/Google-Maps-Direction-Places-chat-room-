@@ -24,7 +24,21 @@ android {
 
 }
 
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+
 dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    def nav_version = "2.3.0"
+
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
     implementation 'androidx.appcompat:appcompat:1.0.0'
@@ -78,4 +92,3 @@ dependencies {
     //Bottom Nav Bar
     implementation 'com.google.android.material:material:1.1.0'
 }
-apply plugin: 'com.google.gms.google-services'
